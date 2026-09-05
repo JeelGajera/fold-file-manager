@@ -7,7 +7,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
-import androidx.glance.GlanceTheme
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
@@ -18,6 +17,7 @@ import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
 import androidx.glance.layout.Row
+import androidx.glance.layout.RowScope
 import androidx.glance.layout.Spacer
 import androidx.glance.layout.fillMaxHeight
 import androidx.glance.layout.fillMaxSize
@@ -29,11 +29,9 @@ import androidx.glance.text.FontWeight
 import androidx.glance.text.Text
 import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
-import com.jeelgajera.fold.core.storage.index.FoldDatabase
 import com.jeelgajera.fold.core.storage.stats.VolumeStats
 import com.jeelgajera.fold.core.storage.util.Formatting
 import androidx.glance.action.ActionParameters
-import androidx.glance.layout.defaultWeight
 
 /**
  * FOLD's two home-screen widgets.
@@ -116,7 +114,7 @@ class StorageWidget : GlanceAppWidget() {
                 Row(GlanceModifier.fillMaxWidth().height(12.dp)) {
                     repeat(WIDGET_CELLS) { index ->
                         val filled = index * 100 / WIDGET_CELLS < percent
-                        Box(
+                        MeterCell(
                             filled = filled,
                             isLast = index == WIDGET_CELLS - 1,
                         )
@@ -126,8 +124,15 @@ class StorageWidget : GlanceAppWidget() {
         }
     }
 
+    /**
+     * One cell of the meter.
+     *
+     * Declared on [RowScope] because `defaultWeight` is a member of that scope
+     * rather than a free function, so the cell can only be laid out inside the
+     * Row it divides.
+     */
     @Composable
-    private fun Box(filled: Boolean, isLast: Boolean) {
+    private fun RowScope.MeterCell(filled: Boolean, isLast: Boolean) {
         Spacer(
             GlanceModifier
                 .defaultWeight()
