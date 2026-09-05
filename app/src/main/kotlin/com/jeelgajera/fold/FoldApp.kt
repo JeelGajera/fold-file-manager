@@ -204,6 +204,9 @@ fun FoldApp(
             Destination.SETTINGS -> SettingsScreen(
                 versionName = BuildConfig.VERSION_NAME,
                 versionCode = BuildConfig.VERSION_CODE.toString(),
+                gitSha = BuildConfig.GIT_SHA,
+                sourceUrl = BuildConfig.SOURCE_URL,
+                issuesUrl = BuildConfig.ISSUES_URL,
                 onOpenAllFilesAccess = onRequestAllFilesAccess,
                 onOpenLimited = { destination = Destination.LIMITED },
                 onOpenHidden = { destination = Destination.HIDDEN },

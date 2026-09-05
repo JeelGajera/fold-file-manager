@@ -6,6 +6,25 @@ plugins {
     alias(libs.plugins.hilt)
 }
 
+/** The repository this build came from. Used by About and by the issue link. */
+val SOURCE_URL = "https://github.com/JeelGajera/fold-file-manager"
+
+/**
+ * The short commit hash, or "unknown" outside a git checkout.
+ *
+ * Baked into BuildConfig so the About screen can name the exact commit a build
+ * came from, and so a filed issue carries it. Failing softly matters: a source
+ * tarball with no .git directory must still build.
+ */
+fun gitSha(): String = try {
+    providers.exec {
+        commandLine("git", "rev-parse", "--short", "HEAD")
+        isIgnoreExitValue = true
+    }.standardOutput.asText.get().trim().ifEmpty { "unknown" }
+} catch (e: Exception) {
+    "unknown"
+}
+
 android {
     namespace = "com.jeelgajera.fold"
     compileSdk = 35
@@ -21,6 +40,13 @@ android {
         versionName = "0.4.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // The About screen shows the exact commit a build came from, and the
+        // "report an issue" link carries it into the issue body. A bug report
+        // that names the commit is worth several that describe a version.
+        buildConfigField("String", "GIT_SHA", "\"" + gitSha() + "\"")
+        buildConfigField("String", "SOURCE_URL", "\"" + SOURCE_URL + "\"")
+        buildConfigField("String", "ISSUES_URL", "\"" + SOURCE_URL + "/issues\"")
     }
 
     buildTypes {

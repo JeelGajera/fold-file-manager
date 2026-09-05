@@ -97,6 +97,9 @@ class SettingsViewModel @Inject constructor(
 fun SettingsScreen(
     versionName: String,
     versionCode: String,
+    gitSha: String,
+    sourceUrl: String,
+    issuesUrl: String,
     onOpenAllFilesAccess: () -> Unit,
     onOpenLimited: () -> Unit,
     onOpenHidden: () -> Unit,
@@ -262,6 +265,16 @@ fun SettingsScreen(
                 help = stringResource(R.string.settings_widgets_help),
                 value = "2",
                 onClick = onOpenWidgets,
+            )
+        }
+
+        item {
+            AboutSection(
+                versionName = versionName,
+                versionCode = versionCode,
+                gitSha = gitSha,
+                sourceUrl = sourceUrl,
+                issuesUrl = issuesUrl,
             )
         }
 

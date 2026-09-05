@@ -109,6 +109,21 @@
          store listing. -->
     <string name="settings_footer">FOLD %1$s · BUILD %2$s\nNO ANALYTICS · NO NETWORK CALLS</string>
 
+    <!-- About. FOLD ships no crash reporter, so this is how a problem gets
+         reported: the exact commit, the source, and a pre-filled issue the
+         user reads before sending. -->
+    <string name="about_group">ABOUT</string>
+    <string name="about_version">Version</string>
+    <string name="about_version_help">The release this build belongs to</string>
+    <string name="about_commit">Commit</string>
+    <string name="about_commit_help">Opens this exact commit in the source</string>
+    <string name="about_source">Source code</string>
+    <string name="about_source_help">The whole app, including everything on this screen</string>
+    <string name="about_report">Report an issue</string>
+    <string name="about_report_help">Opens a new issue with the build details filled in</string>
+    <string name="about_open">OPEN</string>
+    <string name="about_no_crash_reporter">FOLD has no crash reporter, so nothing is sent when something goes wrong — which means a problem only gets fixed if someone reports it. The issue form is filled in with the version, commit, Android release and device model, and nothing else. You see and edit all of it before it is sent.</string>
+
     <!-- Drawer -->
     <string name="drawer_settings">Settings</string>
     <string name="drawer_glyph">Glyph</string>

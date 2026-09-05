@@ -28,7 +28,8 @@ android {
 dependencies {
     implementation(project(":core:design"))
     implementation(project(":core:storage"))
-    implementation(project(":core:crypto"))
+    // api: VaultViewModel exposes VaultState, so callers need the type.
+    api(project(":core:crypto"))
     implementation(project(":feature:glyph"))
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.compose)
