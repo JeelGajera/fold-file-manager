@@ -13,8 +13,8 @@ data class ServerSession(
     val issuedAtMillis: Long,
     @Volatile var lastSeenMillis: Long,
 ) {
-    /** A readable name for the connected-clients list: `MacBook Pro · Safari`. */
-    val label: String get() = describeUserAgent(userAgent)
+    /** A readable name for the connected-clients list: `Mac · Safari`. */
+    val label: String get() = ServerAuth.describeUserAgent(userAgent)
 }
 
 /**

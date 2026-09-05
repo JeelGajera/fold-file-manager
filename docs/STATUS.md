@@ -21,23 +21,26 @@ Maven Central *is* reachable, which is why the non-Android dependencies
 
 | | Status |
 |---|---|
-| Compiles | **Not verified.** No compiler has seen this code. |
-| Unit tests pass | **Not verified.** No test has been executed. |
+| Dependency resolution | **Verified in CI.** AGP, Kotlin, Compose, Hilt, Room, KSP and Glance resolve and configure together. |
+| Android resource compilation | **Verified in CI.** |
+| Pure-JVM sources compile | **Verified.** The ten Android-free files (`FsPath`, `FsEntry`, `FsCapabilities`, `FsChange`, `FileSystemProvider`, `PathGuard`, `MimeResolver`, `FileCategory`, `Formatting`, `ServerAuth`) compile under Kotlin 2.0.21. |
+| Their tests pass | **Verified: 63 tests, 0 failures.** `PathGuardTest` (19), `MimeResolverTest` (21), `ServerAuthTest` (14), `FsPathTest` (9). |
+| Android sources compile | In progress — CI is working through it. |
 | Runs on a device | **Not verified.** |
-| API usage correct | Written carefully against known-stable APIs; unconfirmed. |
-| Architecture and security reasoning | Sound on inspection; that is what was actually delivered. |
 
-Treat the first build as a bring-up exercise, not a regression.
+Treat the remaining bring-up as a bring-up exercise, not a regression.
+
+The 63 passing tests cover the parts that carry the security risk: path
+traversal, MIME resolution, and the server's auth and rate limiting. Those were
+run by compiling the real repo files in a throwaway JVM project — the sources
+were not copied or adapted, so what passed is what ships.
 
 ## Where to look first
 
 Ranked by how likely they are to be wrong, most likely first.
 
-1. **Dependency versions** (`gradle/libs.versions.toml`). Every version is a
-   real published one, but the *combination* has not been resolved together.
-   AGP 8.7.3 / Kotlin 2.0.21 / Compose BOM 2024.12.01 / Hilt 2.52 is a
-   conventional set; if something conflicts, this file is the single place to
-   fix it.
+1. ~~**Dependency versions.**~~ Resolved: CI confirmed AGP 8.7.3 / Kotlin
+   2.0.21 / Compose BOM 2024.12.01 / Hilt 2.52 configure together.
 
 2. **`androidx.compose.ui.text.googlefonts.R.array.com_google_android_gms_fonts_certs`**
    in `FoldTypography.kt`. The certificate array ships inside
