@@ -51,14 +51,17 @@ jobs:
       - name: Accept Android SDK licences
         run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
 
+      # --continue so one run reports every module's failures rather than
+      # stopping at the first. During bring-up that is the difference between
+      # one CI cycle per error and one cycle per round of errors.
       - name: Assemble debug
-        run: ./gradlew :app:assembleDebug --stacktrace
+        run: ./gradlew :app:assembleDebug --continue
 
       - name: Unit tests
         # Runs even when assemble failed, so one CI cycle reports every problem
         # rather than one problem at a time.
         if: always()
-        run: ./gradlew test --stacktrace
+        run: ./gradlew test --continue
 
       - name: Upload test reports
         if: always()

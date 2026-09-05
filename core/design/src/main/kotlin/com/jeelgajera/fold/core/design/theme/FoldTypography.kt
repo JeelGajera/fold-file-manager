@@ -3,9 +3,12 @@ package com.jeelgajera.fold.core.design.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+// The Font(googleFont =, fontProvider =) overload is a top-level function in the
+// googlefonts package, not the one in androidx.compose.ui.text.font. Importing
+// the wrong Font is the mistake this line exists to avoid repeating.
+import androidx.compose.ui.text.googlefonts.Font
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.em
