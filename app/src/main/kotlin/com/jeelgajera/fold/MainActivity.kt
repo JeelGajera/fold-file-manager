@@ -8,8 +8,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.lifecycleScope
@@ -55,7 +53,8 @@ class MainActivity : FragmentActivity() {
     @Inject
     lateinit var vault: VaultRepository
 
-    private var vaultVisible by mutableStateOf(false)
+    /** Tracks the applied FLAG_SECURE state so the window is not re-flagged on every recomposition. */
+    private var secureFlagApplied = false
 
     /**
      * The SAF folder picker, for limited-access mode.
@@ -109,7 +108,7 @@ class MainActivity : FragmentActivity() {
                 FoldApp(
                     onRequestAllFilesAccess = ::openAllFilesAccess,
                     onPickFolder = { pickFolder.launch(null) },
-                    onVaultVisibilityChanged = { visible -> setVaultVisible(visible) },
+                    onVaultVisibilityChanged = ::applyVaultSecureFlag,
                 )
             }
         }
@@ -137,9 +136,9 @@ class MainActivity : FragmentActivity() {
      * because applying it app-wide would break legitimate screenshots of a folder
      * listing and train people to work around it.
      */
-    private fun setVaultVisible(visible: Boolean) {
-        if (vaultVisible == visible) return
-        vaultVisible = visible
+    private fun applyVaultSecureFlag(visible: Boolean) {
+        if (secureFlagApplied == visible) return
+        secureFlagApplied = visible
         if (visible) {
             window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
         } else {
