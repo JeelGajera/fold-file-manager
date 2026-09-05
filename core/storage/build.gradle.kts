@@ -25,6 +25,12 @@ android {
     testOptions.unitTests.isIncludeAndroidResources = true
 }
 
+// Room's exported schema is checked in, so a migration bug shows up as a diff in
+// review rather than as a crash on someone's device.
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
+
 dependencies {
     implementation(libs.androidx.core.ktx)
     api(libs.androidx.documentfile)
