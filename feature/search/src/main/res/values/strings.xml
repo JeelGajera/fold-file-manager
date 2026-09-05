@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="search_placeholder">Search names and contents</string>
+    <string name="search_clear">Clear search</string>
+    <string name="search_prompt">SEARCH</string>
+    <string name="search_matches">%1$d MATCHES</string>
+    <!-- A measured figure, not a decorative one. -->
+    <string name="search_timing">%1$d ms · %2$s files</string>
+    <string name="search_no_matches">No file matches “%1$s”. Contents search is off unless you turn it on.</string>
+    <string name="search_line">L %1$d</string>
+    <string name="search_where_name">NAME</string>
+    <string name="search_where_contents">CONTENTS</string>
+    <string name="search_on">ON</string>
+    <string name="search_off">OFF</string>
+
+    <string name="search_filter_contents">CONTENTS</string>
+    <string name="search_filter_docs">DOCS</string>
+    <string name="search_filter_images">IMAGES</string>
+    <string name="search_filter_video">VIDEO</string>
+    <string name="search_filter_archives">ARCHIVES</string>
+
+    <string name="search_scope_all">ALL STORAGE</string>
+    <string name="search_scope_folder">THIS FOLDER</string>
+    <string name="search_scope_vault">VAULT</string>
+
+    <!--
+      The vault is excluded from the index by design, so this scope can only
+      search a vault that is currently unlocked. Saying that beats an empty
+      result list that looks like a bug.
+    -->
+    <string name="search_vault_locked_tag">VAULT</string>
+    <string name="search_vault_locked">Vault contents are never indexed. Unlock the vault to search inside it.</string>
+</resources>

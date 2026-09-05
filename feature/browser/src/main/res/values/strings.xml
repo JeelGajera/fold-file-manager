@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App bar -->
+    <string name="app_bar_search">Search</string>
+    <string name="app_bar_menu">More</string>
+    <string name="app_bar_close_menu">Close menu</string>
+
+    <!-- Home -->
+    <string name="home_of_total">OF %1$s</string>
+    <string name="home_meter_description">Storage: %1$s used of %2$s</string>
+    <string name="home_recent">RECENT</string>
+    <string name="home_all_files">ALL FILES</string>
+    <string name="home_item_count">%1$s items</string>
+    <string name="home_empty_index">Nothing indexed yet. FOLD builds its index in the background, and search gets faster as it does.</string>
+
+    <!-- Browse -->
+    <string name="browse_folder_stats">%1$d ITEMS · %2$s</string>
+    <string name="browse_hidden">HIDDEN</string>
+    <string name="browse_toggle_view">Switch between list and grid</string>
+    <string name="browse_selected">%1$d SELECTED</string>
+    <string name="browse_action_share">SHARE</string>
+    <string name="browse_action_delete">DELETE</string>
+    <string name="browse_action_clear">CLEAR</string>
+    <string name="browse_folder">Folder</string>
+    <string name="browse_sort_date">SORT · DATE</string>
+    <string name="browse_sort_size">SORT · SIZE</string>
+    <string name="browse_sort_name">SORT · NAME</string>
+
+    <!-- Hidden files. The wording here is load-bearing: this is a visibility
+         control and must never read as protection. -->
+    <string name="hidden_title">Hidden files</string>
+    <string name="hidden_body">Files and folders whose name starts with a dot. Showing them changes what you see — it does not protect anything. For that, use the vault.</string>
+    <string name="hidden_toggle">Show hidden files</string>
+    <string name="hidden_callout_tag">NOT SECURITY</string>
+    <string name="hidden_callout">Any app with storage access can read these files whether or not FOLD shows them.</string>
+    <string name="hidden_none_here">No dot files in %1$s.</string>
+
+    <!-- Limited access -->
+    <string name="limited_kicker">LIMITED ACCESS</string>
+    <string name="limited_title">Working with what you allowed</string>
+    <string name="limited_body">FOLD can open, move and share anything in these folders. Everything else on the device is invisible to it.</string>
+    <string name="limited_state_allowed">ALLOWED</string>
+    <string name="limited_state_hidden">HIDDEN</string>
+    <string name="limited_everything_else">Everything else</string>
+    <string name="limited_everything_else_meta">Android/data, root, other volumes</string>
+    <string name="limited_grant_all">ALLOW ALL FILES ACCESS</string>
+    <string name="limited_add_folder">ADD ANOTHER FOLDER</string>
+    <string name="limited_note">You can keep using FOLD like this for as long as you like.</string>
+
+    <!-- Onboarding -->
+    <string name="onboarding_step">STEP %1$d OF 3</string>
+    <string name="onboarding_title_1">Your phone has files this phone refuses to show you</string>
+    <string name="onboarding_title_2">What FOLD reads, and what it never sends</string>
+    <string name="onboarding_title_3">One permission, then you are done</string>
+    <string name="onboarding_body_1">Download a .md note, a .log, an .epub or a firmware image and most file apps act as if it does not exist. They read a media index, not your storage. FOLD reads the filesystem, so everything is there — visible, movable, shareable.</string>
+    <string name="onboarding_body_2">FOLD reads file names, sizes, dates and, when you search contents, the text inside files you point it at. It has no account, no analytics and no server of its own.</string>
+    <string name="onboarding_body_3">Android calls it All files access. It is the only way an app can list every folder on the device. Grant it and FOLD is complete; refuse it and FOLD still works inside the folders you pick.</string>
+    <string name="onboarding_continue">CONTINUE</string>
+    <string name="onboarding_grant">ALLOW ALL FILES ACCESS</string>
+    <string name="onboarding_skip">SKIP</string>
+    <string name="onboarding_why">WHY THIS MATTERS</string>
+    <string name="onboarding_pick_folders">PICK FOLDERS INSTEAD</string>
+    <string name="onboarding_unavailable">This device has no screen for All files access. FOLD will work inside the folders you pick instead.</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_group_access">ACCESS</string>
+    <string name="settings_group_storage">STORAGE</string>
+    <string name="settings_group_share">SHARE OVER WI-FI</string>
+    <string name="settings_group_appearance">APPEARANCE</string>
+
+    <string name="settings_all_files">All files access</string>
+    <string name="settings_all_files_help">Required to see every file on the device</string>
+    <string name="settings_limited">Limited access mode</string>
+    <string name="settings_limited_help">Which folders FOLD can reach right now</string>
+    <string name="settings_hidden">Hidden files</string>
+    <string name="settings_hidden_help">Show dot files while browsing</string>
+
+    <string name="settings_internal">Internal storage</string>
+    <string name="settings_cache">Index</string>
+    <string name="settings_cache_help">File names, sizes and dates. No file contents are stored.</string>
+    <string name="settings_cache_clear">CLEAR</string>
+    <string name="settings_default_sort">Default sort</string>
+    <string name="settings_default_sort_help">Applies to every folder</string>
+
+    <string name="settings_port">Port</string>
+    <string name="settings_port_help">Used by the browser address</string>
+    <string name="settings_require_pin">Require PIN</string>
+    <string name="settings_require_pin_help">Six digits, new each session</string>
+    <string name="settings_stop_on_lock">Stop when screen locks</string>
+    <string name="settings_stop_on_lock_help">Server shuts down with the display</string>
+    <string name="settings_allow_upload">Allow uploads</string>
+    <string name="settings_allow_upload_help">Let connected devices send files to this phone</string>
+    <string name="settings_allow_delete">Allow deletes</string>
+    <string name="settings_allow_delete_help">Let connected devices delete files. Each delete is confirmed.</string>
+
+    <string name="settings_theme">Theme</string>
+    <string name="settings_theme_help">Light, dark or follow system</string>
+    <string name="settings_glyph">Glyph</string>
+    <string name="settings_glyph_help">Strip and matrix sequences</string>
+    <string name="settings_widgets">Widgets</string>
+    <string name="settings_widgets_help">Storage meter, server toggle</string>
+
+    <string name="settings_on">ON</string>
+    <string name="settings_off">OFF</string>
+    <string name="settings_open">OPEN</string>
+
+    <!-- The privacy claim, stated where it can be checked rather than in a
+         store listing. -->
+    <string name="settings_footer">FOLD %1$s · BUILD %2$s\nNO ANALYTICS · NO NETWORK CALLS</string>
+
+    <!-- Drawer -->
+    <string name="drawer_settings">Settings</string>
+    <string name="drawer_glyph">Glyph</string>
+    <string name="drawer_share">Share over Wi-Fi</string>
+    <string name="drawer_vault">Vault</string>
+    <string name="drawer_hidden">Hidden files</string>
+    <string name="drawer_limited">Limited access</string>
+    <string name="drawer_widgets">Widgets</string>
+    <string name="drawer_onboarding">Onboarding</string>
+    <string name="drawer_replay">REPLAY</string>
+    <string name="drawer_running">RUNNING</string>
+    <string name="drawer_shown">SHOWN</string>
+    <string name="drawer_hidden_state">HIDDEN</string>
+    <string name="drawer_theme">APPEARANCE</string>
+    <string name="drawer_theme_light">LIGHT</string>
+    <string name="drawer_theme_dark">DARK</string>
+    <string name="drawer_theme_system">SYSTEM</string>
+
+    <!-- Dock -->
+    <string name="tab_home">HOME</string>
+    <string name="tab_browse">BROWSE</string>
+    <string name="tab_share">SHARE</string>
+    <string name="tab_vault">VAULT</string>
+</resources>

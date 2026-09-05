@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="glyph_title">Glyph</string>
+    <string name="glyph_body">Transfers, connection requests and vault failures can show on the back of the phone.</string>
+    <string name="glyph_mode_strip">STRIP</string>
+    <string name="glyph_mode_matrix">MATRIX</string>
+    <string name="glyph_mode_off">NO GLYPH</string>
+
+    <string name="glyph_preview_strip">PREVIEW · TRANSFER IN PROGRESS</string>
+    <string name="glyph_preview_matrix">PREVIEW · 25 × 25 FRAME</string>
+    <string name="glyph_zones">ZONE 1 → 5</string>
+    <string name="glyph_filled">%1$d%% FILLED</string>
+    <string name="glyph_frame">FRAME %1$02d / 24 · 12 FPS</string>
+
+    <string name="glyph_none_tag">NO GLYPH HARDWARE</string>
+    <string name="glyph_none">On this device the glyph section is hidden entirely. Transfers report progress in the notification shade instead, and nothing else changes.</string>
+
+    <!--
+      The honest state of the integration. The Glyph SDKs are not on Maven
+      Central and need developer registration plus an API key in the manifest;
+      until that is done the controllers are wired but inert.
+    -->
+    <string name="glyph_sdk_pending_tag">NOT WIRED YET</string>
+    <string name="glyph_sdk_pending">This phone has glyph hardware, but FOLD does not ship Nothing\'s Glyph SDK yet — it needs developer registration and an API key. The sequences below are built and previewable; they will not light the back of the phone until that is done.</string>
+
+    <string name="glyph_event_progress">Transfer in progress</string>
+    <string name="glyph_event_progress_spec">ZONE 1-5 · 0-100% BRIGHTNESS · LOOP</string>
+    <string name="glyph_event_complete">Transfer complete</string>
+    <string name="glyph_event_complete_spec">ALL ZONES · 100% · 400 MS · 2×</string>
+    <string name="glyph_event_incoming">Incoming connection</string>
+    <string name="glyph_event_incoming_spec">ZONE 3 · PULSE 600 MS · UNTIL ANSWERED</string>
+    <string name="glyph_event_vault">Vault unlock failure</string>
+    <string name="glyph_event_vault_spec">ZONE 1 + 5 · 90% · 120 MS · 3×</string>
+</resources>

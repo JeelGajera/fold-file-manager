@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="vault_title">Vault</string>
+    <string name="vault_locked_body">Files encrypted on this device. They stay out of the browser, search, the widgets and the share sheet until you unlock.</string>
+    <string name="vault_unlock_biometric">UNLOCK WITH FINGERPRINT</string>
+    <string name="vault_use_pin">USE PIN INSTEAD</string>
+    <string name="vault_prompt_title">Unlock the vault</string>
+    <string name="vault_prompt_subtitle">FOLD needs your fingerprint to use the vault key.</string>
+    <string name="vault_failed_attempts">%1$d FAILED ATTEMPTS</string>
+
+    <string name="vault_unlocked">VAULT · UNLOCKED</string>
+    <string name="vault_timer">%1$s LEFT</string>
+    <string name="vault_summary">%1$d ITEMS · %2$s</string>
+    <string name="vault_lock_now">LOCK NOW</string>
+    <string name="vault_move_in">MOVE FILES IN</string>
+    <string name="vault_added">added %1$s</string>
+    <string name="vault_ground_note">The light ground means you are inside the vault. It locks itself after five minutes, or when you leave the app.</string>
+
+    <!--
+      Deletion is best-effort and the app says so. On flash storage the old
+      blocks can remain readable until wear levelling reaches them, and no app
+      can change that. Implying secure erasure would be the more comfortable
+      copy and the wrong one.
+    -->
+    <string name="vault_deletion_note">When a file moves into the vault, FOLD encrypts it, checks the copy reads back, then deletes the original. On flash storage that deletion is best-effort — the phone may keep the old blocks readable for a while. FOLD cannot guarantee erasure and does not claim to.</string>
+
+    <string name="vault_no_lock_tag">NO SCREEN LOCK</string>
+    <string name="vault_no_lock">The vault needs a screen lock. Android will not create a key that requires authentication on a device with nothing to authenticate against. Set a PIN, pattern or password and come back.</string>
+
+    <string name="vault_lost_tag">KEY GONE</string>
+    <string name="vault_lost">The vault key was invalidated, most likely because a new fingerprint was added. The encrypted files can no longer be opened, and trying again will not help. This is the trade that stops someone who can enrol a finger from inheriting the vault.</string>
+</resources>
