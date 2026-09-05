@@ -29,14 +29,16 @@ test suites on every push and pull request.
 |---|---|
 | Dependency resolution and configuration | Passing |
 | Android resource compilation | Passing |
-| `:core:storage` compilation, including Room and KSP | Passing |
-| `PathGuardTest`, `MimeResolverTest`, `ServerAuthTest`, `FsPathTest` | 63 tests, 0 failures |
-| Remaining module compilation | In progress |
+| Compilation of every module, including Room, KSP and Hilt | Passing |
+| `:app:assembleDebug` | Passing; the debug APK is uploaded as a build artifact |
+| Unit test suites across `:core:storage`, `:core:crypto` and `:feature:transfer` | 74 tests, 0 failures |
 | Instrumented tests | Not yet written |
 
-The passing unit tests cover the security-critical logic: path traversal
-handling, MIME resolution, and the LAN server's authentication and rate
-limiting.
+The unit suites cover the security-critical logic: path canonicalisation and
+containment (`PathGuardTest`, 19), MIME resolution (`MimeResolverTest`, 21),
+path modelling (`FsPathTest`, 9), the vault blob header and key-alias
+versioning (`VaultBlobHeaderTest`, 11), and the LAN server's authentication and
+rate limiting (`ServerAuthTest`, 14).
 
 ## Known risk areas
 
@@ -56,7 +58,6 @@ Ranked by likelihood of needing attention.
 
 ## Remaining work
 
-- [ ] Complete compilation of the Compose and Hilt modules; keep CI green.
 - [ ] Instrumented tests: permission grant, denial and revocation mid-session;
       vault encrypt/decrypt round-trip on device; key rotation.
 - [ ] Ktor `testApplication` suite for the server routes. The dependency is
