@@ -36,7 +36,7 @@ android {
 
 dependencies {
     implementation(project(":core:design"))
-    implementation(project(":core:storage"))
+    api(project(":core:storage"))
     implementation(project(":feature:glyph"))
 
     implementation(libs.androidx.core.ktx)

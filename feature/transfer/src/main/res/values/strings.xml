@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Foreground service -->
+    <string name="transfer_channel_name">Sharing over Wi-Fi</string>
+    <string name="transfer_channel_description">Shown while FOLD is serving files on your network.</string>
+    <string name="transfer_notification_starting">Starting…</string>
+    <string name="transfer_notification_sharing">Sharing over Wi-Fi</string>
+    <string name="transfer_notification_stop">STOP</string>
+
+    <!-- Errors. Each one says what actually went wrong and what to do about it. -->
+    <string name="transfer_error_cellular">This phone is on mobile data, not Wi-Fi. Sharing here would put the server on your carrier\'s network.</string>
+    <string name="transfer_error_no_address">No Wi-Fi address yet. Connect to a network and try again.</string>
+    <string name="transfer_error_port">Port %1$d is already in use. Pick another in Settings.</string>
+
+    <!-- Send tab -->
+    <string name="transfer_tab_send">SEND</string>
+    <string name="transfer_tab_receive">RECEIVE</string>
+    <string name="transfer_tab_quick">QUICK</string>
+    <string name="transfer_status_sharing">SHARING OVER WI-FI</string>
+    <string name="transfer_status_starting">STARTING…</string>
+    <string name="transfer_status_off">NOT SHARING</string>
+    <string name="transfer_pin_label">PIN</string>
+    <string name="transfer_pin_placeholder">— — — — — —</string>
+    <string name="transfer_start">START SHARING</string>
+    <string name="transfer_stop">STOP SHARING</string>
+    <string name="transfer_cancel">CANCEL</string>
+    <string name="transfer_help_running">Open that address in a browser on any device on %1$s. Files stay on this phone.</string>
+    <string name="transfer_help_running_unknown_network">Open that address in a browser on any device on the same Wi-Fi. Files stay on this phone.</string>
+    <string name="transfer_help_off">Turns this phone into a small web server on your Wi-Fi. Nothing leaves your network, and no account is involved.</string>
+    <string name="transfer_section_in_progress">IN PROGRESS</string>
+    <string name="transfer_section_connected">CONNECTED</string>
+    <string name="transfer_drop">DROP</string>
+    <string name="transfer_no_clients">No one has connected yet.</string>
+
+    <!-- Receive tab -->
+    <string name="transfer_scanning">SCANNING · %1$s</string>
+    <string name="transfer_scanning_unknown">SCANNING</string>
+    <string name="transfer_send_to">SEND</string>
+    <string name="transfer_receive_note">Devices appear when they open FOLD on the same Wi-Fi. Nothing is sent until you accept.</string>
+
+    <!-- Quick tab -->
+    <string name="transfer_quick_ready">%1$d FILE READY</string>
+    <string name="transfer_quick_ready_plural">%1$d FILES READY</string>
+    <string name="transfer_quick_send">SEND TO ANY APP</string>
+    <string name="transfer_quick_note">FOLD hands the file to Android\'s share sheet with the right MIME type, so apps that reject unknown files still accept it.</string>
+    <!--
+      The honest sentence about Quick Share. There is no public API to invoke it
+      directly, and hardcoding its component name breaks between releases. Saying
+      so once is better than implying an integration that does not exist.
+    -->
+    <string name="transfer_quick_limitation">Android has no public way for an app to open Quick Share directly, so FOLD opens the system share sheet — Quick Share appears there alongside everything else.</string>
+    <string name="transfer_quick_nothing_selected">Pick a file in Browse first.</string>
+    <string name="transfer_chooser_title">Send with</string>
+    <string name="transfer_chooser_lan">Send over FOLD Wi-Fi</string>
+</resources>

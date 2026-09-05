@@ -82,7 +82,13 @@ fun FoldAccentButton(
     }
 }
 
-/** The quieter partner to [FoldAccentButton]: outline only, same geometry. */
+/**
+ * The quieter partner to [FoldAccentButton]: outline only, same geometry.
+ *
+ * Unlike the accent button this does not claim the full width -- it is used both
+ * as a full-width secondary action and as a small inline control (the DROP button
+ * on a connected client), so the caller decides.
+ */
 @Composable
 fun FoldOutlineButton(
     label: String,
@@ -94,7 +100,6 @@ fun FoldOutlineButton(
 ) {
     Row(
         modifier
-            .fillMaxWidth()
             .border(BorderStroke(FoldRules.hairline, borderColor), RectangleShape)
             .clickable(role = Role.Button, onClick = onClick)
             .defaultMinSize(minHeight = minHeight)
