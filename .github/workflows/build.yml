@@ -1,0 +1,81 @@
+name: Build
+
+# This workflow exists to close the gap named in docs/STATUS.md: the code was
+# written in an environment with no Android SDK and no access to Google's Maven
+# repository, so it has never been compiled. GitHub's runners have both, so CI
+# is the first thing to actually verify this codebase.
+#
+# Expect the first run to fail. That is the point -- the failures are the
+# bring-up list.
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  # A new push supersedes the run in flight. Nobody needs the results of a
+  # commit that has already been replaced.
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # BuildConfig.GIT_SHA is read with `git rev-parse` at configuration
+          # time, which needs real git history rather than a detached blob.
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          cache-read-only: ${{ github.ref != 'refs/heads/master' }}
+
+      # The Android SDK ships on the ubuntu-latest runner image; only the
+      # licence acceptance for the pinned compileSdk needs doing.
+      - name: Accept Android SDK licences
+        run: yes | "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" --licenses > /dev/null || true
+
+      - name: Assemble debug
+        run: ./gradlew :app:assembleDebug --stacktrace
+
+      - name: Unit tests
+        # Runs even when assemble failed, so one CI cycle reports every problem
+        # rather than one problem at a time.
+        if: always()
+        run: ./gradlew test --stacktrace
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            **/build/reports/tests/
+            **/build/test-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload debug APK
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fold-debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 14
+          if-no-files-found: ignore

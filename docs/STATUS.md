@@ -73,10 +73,21 @@ and they are the parts to read rather than to re-derive:
 - **`VaultCrypto`**'s blob format and its tests. Pure byte handling; the
   Keystore half needs a device.
 
+## CI does the first build
+
+`.github/workflows/build.yml` runs `:app:assembleDebug` and `test` on every push
+and pull request. GitHub's `ubuntu-latest` image ships the Android SDK and can
+reach Google's Maven repository, so **CI is the first thing that actually
+compiles this code** — which is exactly why it is there.
+
+The first run is expected to fail. Its log is the bring-up list, and it is a
+better one than anything that could be written by hand here. The unit-test step
+runs even when assembly fails, so one cycle reports every problem rather than
+one at a time.
+
 ## Before the first release
 
-- [ ] Build and fix whatever the compiler finds.
-- [ ] Run `./gradlew test` and fix whatever the tests find.
+- [ ] Get CI green: fix whatever the compiler and the tests find.
 - [ ] Write the instrumented tests: permission grant, denial, and revocation
       mid-session; vault round-trip on real hardware; key rotation.
 - [ ] Add the Ktor `testApplication` suite for the server routes — the
