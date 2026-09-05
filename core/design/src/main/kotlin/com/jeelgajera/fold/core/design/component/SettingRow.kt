@@ -1,5 +1,6 @@
 package com.jeelgajera.fold.core.design.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -78,7 +79,7 @@ fun FoldToggleRow(
     Row(
         modifier
             .fillMaxWidth()
-            .androidx_background(background)
+            .background(background)
             .toggleable(value = checked, role = Role.Switch, onValueChange = onCheckedChange)
             .bottomRule(colors.divider)
             .defaultMinSize(minHeight = FoldSizing.settingRowMinHeight)
@@ -101,5 +102,3 @@ fun FoldToggleRow(
     }
 }
 
-private fun Modifier.androidx_background(color: Color) =
-    androidx.compose.foundation.background(color)

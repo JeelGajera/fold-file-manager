@@ -1,5 +1,6 @@
 package com.jeelgajera.fold.core.design.component
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import com.jeelgajera.fold.core.design.theme.FoldTheme
  * badge, and the badge's mark flipping from the extension to a check -- so the
  * state reads without relying on the red.
  */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FoldFileRow(
     name: String,

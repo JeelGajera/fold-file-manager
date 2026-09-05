@@ -3,55 +3,45 @@ package com.jeelgajera.fold.core.design.theme
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-// The Font(googleFont =, fontProvider =) overload is a top-level function in the
-// googlefonts package, not the one in androidx.compose.ui.text.font. Importing
-// the wrong Font is the mistake this line exists to avoid repeating.
-import androidx.compose.ui.text.googlefonts.Font
-import androidx.compose.ui.text.googlefonts.GoogleFont
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
+import com.jeelgajera.fold.core.design.R
 
 /**
  * Two families, one job each.
  *
- * Archivo carries every piece of prose, title and control label. Doto -- a
- * dot-matrix face -- carries numerals, byte sizes, rates, paths, PINs and status
- * labels, and nothing else. The split is what makes a byte count read as
- * machine output rather than as writing.
+ * Archivo carries every piece of prose, title and control label. Doto — a
+ * dot-matrix face — carries numerals, byte sizes, rates, paths, PINs and status
+ * labels, and nothing else. The split is what makes a byte count read as machine
+ * output rather than as writing.
  *
- * Both are open-licence Google Fonts, pulled through the downloadable-fonts
- * provider rather than shipped as binaries. NType82 and NDot55 (Nothing's own
- * faces) are deliberately not used, referenced or bundled.
+ * Both are open-licence Google Fonts, bundled as variable fonts rather than
+ * fetched through the downloadable-fonts provider. Bundling costs about 1.1 MB
+ * and buys three things: the typography renders on devices without Play
+ * services, it renders on first launch with no network round trip, and the app
+ * makes no network request of any kind (see docs/PRIVACY.md).
  *
- * If Play services is missing or the download fails, Compose falls back to the
- * platform default for that family. The layout survives it: no metric in this
- * file depends on a glyph advance.
+ * Nothing's own faces, NType82 and NDot55, are deliberately not used,
+ * referenced or bundled.
+ *
+ * Both files carry a weight axis. `Font(resId, weight)` applies that axis
+ * through its default `variationSettings`, so one file covers every weight the
+ * design uses.
  */
-// The certificate array ships inside `androidx.compose.ui:ui-text-google-fonts`.
-// With non-transitive R classes it has to be addressed through that library's own
-// R, not this module's.
-private val googleFontProvider = GoogleFont.Provider(
-    providerAuthority = "com.google.android.gms.fonts",
-    providerPackage = "com.google.android.gms",
-    certificates = androidx.compose.ui.text.googlefonts.R.array.com_google_android_gms_fonts_certs,
-)
-
-private val archivoFont = GoogleFont("Archivo")
-private val dotoFont = GoogleFont("Doto")
-
 val ArchivoFamily = FontFamily(
-    Font(googleFont = archivoFont, fontProvider = googleFontProvider, weight = FontWeight.W400),
-    Font(googleFont = archivoFont, fontProvider = googleFontProvider, weight = FontWeight.W600),
-    Font(googleFont = archivoFont, fontProvider = googleFontProvider, weight = FontWeight.W800),
+    Font(R.font.archivo_variable, FontWeight.W400),
+    Font(R.font.archivo_variable, FontWeight.W600),
+    Font(R.font.archivo_variable, FontWeight.W800),
 )
 
 val DotoFamily = FontFamily(
-    Font(googleFont = dotoFont, fontProvider = googleFontProvider, weight = FontWeight.W400),
-    Font(googleFont = dotoFont, fontProvider = googleFontProvider, weight = FontWeight.W600),
-    Font(googleFont = dotoFont, fontProvider = googleFontProvider, weight = FontWeight.W800),
+    Font(R.font.doto_variable, FontWeight.W400),
+    Font(R.font.doto_variable, FontWeight.W600),
+    Font(R.font.doto_variable, FontWeight.W800),
 )
 
 /**

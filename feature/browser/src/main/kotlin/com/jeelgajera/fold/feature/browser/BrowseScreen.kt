@@ -1,5 +1,6 @@
 package com.jeelgajera.fold.feature.browser
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.clickable
@@ -291,6 +292,7 @@ private fun SelectionAction(label: String, onClick: () -> Unit) {
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 private fun GridTile(
     entry: FsEntry,

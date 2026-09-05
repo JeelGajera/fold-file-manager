@@ -6,6 +6,7 @@ import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -299,7 +300,7 @@ private fun ResultRow(result: SearchResult, query: String, onClick: () -> Unit) 
         Modifier
             .fillMaxWidth()
             .bottomRule(colors.divider)
-            .androidxClickable(onClick)
+            .clickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
     ) {
         Row(
@@ -391,8 +392,6 @@ private fun highlight(
     }
 }
 
-private fun Modifier.androidxClickable(onClick: () -> Unit) =
-    androidx.compose.foundation.clickable(onClick = onClick)
 
 @Composable
 private fun SearchScope.label(): String = stringResource(

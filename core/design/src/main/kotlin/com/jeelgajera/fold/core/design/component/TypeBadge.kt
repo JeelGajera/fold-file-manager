@@ -8,6 +8,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -63,7 +64,7 @@ fun TypeBadge(
 
 /** A dashed outline. Marks a hidden (dot-prefixed) entry, which is a visibility state, not a type. */
 private fun Modifier.dashedBorder(color: Color, width: Dp): Modifier =
-    androidx.compose.ui.draw.drawBehind {
+    drawBehind {
         val strokePx = width.toPx()
         val dash = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
             floatArrayOf(3f * density, 3f * density),

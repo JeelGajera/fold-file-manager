@@ -64,25 +64,11 @@ Ktor *server*. There is no HTTP client dependency at all.
 
 **Watch the traffic.** Install the debug build, use the app normally with the LAN
 server off, and point a proxy or a network monitor at it. There should be
-nothing. The one caveat is honest and not FOLD's doing: **downloadable fonts**
-are fetched by Google Play services on the app's behalf, not by the app — see
-below.
+nothing at all — the fonts are bundled, so not even a font fetch occurs.
 
 **Read the manifest.** `app/src/main/AndroidManifest.xml` lists every permission
 with a comment saying why. There is no location, no contacts, no camera, no
 `READ_PHONE_STATE`.
-
-### The one caveat: downloadable fonts
-
-FOLD uses Archivo and Doto through Android's downloadable-fonts provider rather
-than bundling the TTFs. The font is fetched by **Google Play services**, in its
-own process, using its own network access — not by FOLD. It happens once and
-caches system-wide.
-
-This is a real, if small, hole in "no network calls", and it is listed here
-rather than glossed over. If you want it closed, bundle the two TTFs in
-`:core:design` and drop the `GoogleFont.Provider` — both faces are open-licence
-Google Fonts and nothing else in the app depends on the provider.
 
 ---
 
