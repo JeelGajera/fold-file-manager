@@ -26,7 +26,7 @@ import javax.crypto.spec.SecretKeySpec
  * once. That DEK is wrapped with a key-encryption key (the KEK) that lives inside
  * the Android Keystore and never leaves it.
  *
- * The two-level scheme is not ceremony. It means:
+ * The two-level scheme earns its complexity:
  * - unlocking the vault is one Keystore operation, not one per file;
  * - a single file can be re-keyed, exported or deleted without touching the rest;
  * - rotation re-wraps a few hundred small DEKs rather than re-encrypting

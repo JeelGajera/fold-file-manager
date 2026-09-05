@@ -84,7 +84,7 @@ class MainActivity : FragmentActivity() {
     ) {
         if (providerFactory.refresh() && StorageAccess.hasAllFilesAccess()) {
             // Newly granted: build the index now rather than waiting for the next
-            // idle-and-charging window, so search works this session.
+            // idle-and-charging window, so search works straight away.
             IndexWorker.runNow(this)
             IndexWorker.schedulePeriodic(this)
         }

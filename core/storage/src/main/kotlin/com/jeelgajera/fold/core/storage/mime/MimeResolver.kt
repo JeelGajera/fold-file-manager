@@ -17,7 +17,8 @@ import java.io.InputStream
  * 1. **Extension table.** Cheap, deterministic, and where 99% of files land.
  * 2. **Content sniffing.** For files with no extension or an unknown one, read
  *    the first few hundred bytes and match a magic-number signature. This is what
- *    gives `blob_9f2c11` a real type instead of a shrug.
+ *    resolves a type for a file such as `blob_9f2c11`, which has no extension
+ *    to go on.
  * 3. **`application/octet-stream`.** The fallback is a type, not an error. The
  *    file is listed, openable and shareable either way.
  *

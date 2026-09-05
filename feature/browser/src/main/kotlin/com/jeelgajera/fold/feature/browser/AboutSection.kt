@@ -140,7 +140,7 @@ private fun openUrl(context: Context, url: String) {
     val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
         addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
     }
-    // A device with no browser is unusual but not impossible, and a crash on the
-    // "report a problem" button would be a poor joke.
+    // A device with no browser is unusual but not impossible. Failing silently
+    // is better than crashing on the "report a problem" control.
     runCatching { context.startActivity(intent) }
 }
