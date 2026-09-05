@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Backup is off at the application level (allowBackup="false"). These rules are
+    belt and braces: if backup is ever turned on, the vault's blobs and its key
+    generation marker must not leave the device. The Keystore key cannot be backed
+    up at all, so a restored blob would be permanently unreadable anyway -- but
+    shipping a copy of someone's encrypted vault to a cloud backup is not a thing
+    to do by accident.
+-->
+<full-backup-content>
+    <exclude domain="file" path="vault/" />
+    <exclude domain="file" path="fold-settings.json" />
+    <exclude domain="database" path="fold-index.db" />
+</full-backup-content>

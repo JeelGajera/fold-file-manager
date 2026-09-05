@@ -28,6 +28,7 @@ import com.jeelgajera.fold.core.storage.permission.StorageAccess
 import com.jeelgajera.fold.core.storage.permission.StorageAccessLevel
 import com.jeelgajera.fold.core.storage.prefs.FoldSettings
 import com.jeelgajera.fold.core.storage.prefs.SettingsRepository
+import com.jeelgajera.fold.core.storage.prefs.ThemeMode
 import com.jeelgajera.fold.core.storage.stats.VolumeStats
 import com.jeelgajera.fold.core.storage.util.Formatting
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -58,6 +59,7 @@ class SettingsViewModel @Inject constructor(
         _storageUsed.value = VolumeStats.primaryVolume()
     }
 
+    fun setThemeMode(mode: ThemeMode) = viewModelScope.launch { settings.setThemeMode(mode) }
     fun setShowHidden(show: Boolean) = viewModelScope.launch { settings.setShowHiddenFiles(show) }
     fun setRequirePin(require: Boolean) = viewModelScope.launch { settings.setServerRequirePin(require) }
     fun setStopOnScreenOff(stop: Boolean) = viewModelScope.launch { settings.setServerStopOnScreenOff(stop) }

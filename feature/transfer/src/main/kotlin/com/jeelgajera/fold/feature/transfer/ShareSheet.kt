@@ -84,6 +84,28 @@ object ShareSheet {
         return Intent.createChooser(send, context.getString(R.string.transfer_chooser_title))
     }
 
+    /**
+     * An `ACTION_VIEW` intent for opening one file in whatever app handles it.
+     *
+     * Distinct from [forFiles]: opening and sharing are different verbs, and
+     * sending a share sheet when someone taps a file to read it is the kind of
+     * small wrongness that makes an app feel careless. The type is resolved the
+     * same way, which is what makes a .md note open in a note app instead of
+     * producing "no app can perform this action".
+     */
+    fun viewIntent(context: Context, path: FsPath): Intent? {
+        if (path.scheme != FsScheme.RAW) return null
+        val file = File(path.value)
+        val uri = runCatching {
+            FileProvider.getUriForFile(context, authority(context), file)
+        }.getOrNull() ?: return null
+
+        return Intent(Intent.ACTION_VIEW).apply {
+            setDataAndType(uri, MimeResolver.resolve(file))
+            addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        }
+    }
+
     /** SAF documents are already content URIs, so they are shared as they are. */
     fun shareDocumentUris(context: Context, uris: List<Uri>, mimeType: String): Intent {
         val send = Intent(Intent.ACTION_SEND_MULTIPLE).apply {

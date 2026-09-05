@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <!--
+        Shared storage only. The vault's blobs live in files-path, which is
+        deliberately absent here: a FileProvider entry for it would create a
+        second route into the vault that bypasses PathGuard entirely.
+    -->
+    <external-path name="shared" path="." />
+    <external-files-path name="app_external" path="." />
+</paths>

@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <!--
+        All Files Access.
+
+        This is the permission the whole app exists for, and it is declared here
+        with no apology: FOLD's core function is file management, which is one of
+        Play's approved categories for it. Browsing through MediaStore instead is
+        exactly the bug this app was written to fix -- a media index does not know
+        about .md, .log, .epub or a firmware image, so a MediaStore-backed file
+        manager cannot show a user files that are plainly on their phone.
+
+        The app degrades rather than dies without it. See FileSystemProvider.
+    -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+
+    <!--
+        Legacy read/write are declared only for API levels below 33 where a
+        DocumentsProvider may still need them. maxSdkVersion keeps them off
+        modern devices, where All Files Access or a SAF grant is the only path.
+    -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+
+    <!-- The LAN server. -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
+
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_DATA_SYNC" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <!-- The vault. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+
+    <!--
+        Not requested, and worth naming: no location, no contacts, no camera, no
+        READ_PHONE_STATE, and no ad or analytics SDK anywhere in the dependency
+        graph. The Wi-Fi network name is read where the platform allows it
+        without location, and the copy falls back to "your Wi-Fi network" where
+        it does not, rather than asking for location to print a string.
+    -->
+
+    <application
+        android:name=".FoldApplication"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Fold"
+        tools:targetApi="35">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:configChanges="orientation|screenSize|screenLayout|keyboardHidden|uiMode"
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Fold">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <!-- Opening a file from another app lands in FOLD's viewer chooser. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
+        <!--
+            The LAN server's foreground service.
+
+            foregroundServiceType="dataSync" is the accurate declaration for a
+            user-initiated file transfer, and it is what the Play Console
+            justification has to match. It is not "connectedDevice" and not
+            "specialUse".
+        -->
+        <service
+            android:name="com.jeelgajera.fold.feature.transfer.service.TransferService"
+            android:exported="false"
+            android:foregroundServiceType="dataSync" />
+
+        <!--
+            FileProvider for the share sheet. Handing a raw file:// URI to another
+            app throws on modern Android; a content URI with a scoped grant is the
+            only supported way, and the grant is what makes the receiving app able
+            to read exactly one file and nothing else.
+        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_provider_paths" />
+        </provider>
+
+        <receiver
+            android:name="com.jeelgajera.fold.widget.StorageWidgetReceiver"
+            android:exported="false"
+            android:label="@string/widget_storage_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_storage_info" />
+        </receiver>
+
+        <receiver
+            android:name="com.jeelgajera.fold.widget.ServerWidgetReceiver"
+            android:exported="false"
+            android:label="@string/widget_server_label">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/widget_server_info" />
+        </receiver>
+
+        <!--
+            Nothing's Glyph SDK reads its API key from a manifest meta-data entry.
+            The key is issued on developer registration; until then the value is
+            empty and GlyphDetection resolves to no hardware, so every device
+            behaves as if it had no glyph. Nothing else in the app depends on it.
+        -->
+        <meta-data
+            android:name="NothingKey"
+            android:value="" />
+
+        <!-- WorkManager is initialised by Hilt, not by the default initializer. -->
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="androidx.work.WorkManagerInitializer"
+                android:value="androidx.startup"
+                tools:node="remove" />
+        </provider>
+    </application>
+</manifest>
