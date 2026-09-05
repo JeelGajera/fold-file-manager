@@ -105,6 +105,8 @@ verify it rather than asking you to take it on faith.
 
 MIT. See [`LICENSE`](LICENSE).
 
-Archivo and Doto are bundled under the SIL Open Font License 1.1; the licence
-text ships alongside them in
-[`core/design/src/main/res/font/OFL.txt`](core/design/src/main/res/font/OFL.txt).
+Archivo and Doto are bundled under the SIL Open Font License 1.1. The licence
+text ships inside the app at
+[`core/design/src/main/assets/fonts/OFL.txt`](core/design/src/main/assets/fonts/OFL.txt) —
+it lives under `assets/` rather than beside the fonts because Android's `res/font`
+directory accepts only `.ttf`, `.ttc`, `.otf` and `.xml`.
