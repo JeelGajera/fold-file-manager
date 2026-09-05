@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Mirrors FoldDarkColors.background from tokens.json. -->
+    <color name="fold_background">#FF0C0B0B</color>
+    <color name="fold_accent">#FFEC3013</color>
+    <color name="fold_ink">#FFF3F2F2</color>
+</resources>

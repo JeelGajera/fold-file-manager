@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Android 12+ backup and device-to-device transfer. The vault is excluded from
+    both. Device transfer matters as much as cloud backup here: moving to a new
+    phone must not carry encrypted blobs whose key stayed behind in the old
+    phone's Keystore.
+-->
+<data-extraction-rules>
+    <cloud-backup>
+        <exclude domain="file" path="vault/" />
+        <exclude domain="file" path="fold-settings.json" />
+        <exclude domain="database" path="fold-index.db" />
+    </cloud-backup>
+    <device-transfer>
+        <exclude domain="file" path="vault/" />
+        <exclude domain="database" path="fold-index.db" />
+    </device-transfer>
+</data-extraction-rules>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">FOLD</string>
+    <string name="widget_storage_label">FOLD storage</string>
+    <string name="widget_server_label">FOLD share over Wi-Fi</string>
+</resources>
