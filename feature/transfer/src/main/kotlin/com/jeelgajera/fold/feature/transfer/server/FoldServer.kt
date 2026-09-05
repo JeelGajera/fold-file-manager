@@ -277,7 +277,7 @@ class FoldServer(
                 if (call.request.header(HEADER_CONFIRM) != "delete") {
                     return@delete call.respondText(
                         "Confirmation required",
-                        status = HttpStatusCode.PreconditionRequired,
+                        status = PRECONDITION_REQUIRED,
                     )
                 }
                 val target = resolveRequested(call.request.queryParameters["path"])
@@ -365,6 +365,16 @@ class FoldServer(
     }
 
     private companion object {
+        /**
+         * 428 Precondition Required (RFC 6585).
+         *
+         * Ktor's HttpStatusCode does not define this one, so it is constructed
+         * here. It is the accurate code for "this delete needs the confirmation
+         * header": the request is well-formed, and the client can retry once it
+         * supplies the missing precondition.
+         */
+        val PRECONDITION_REQUIRED = HttpStatusCode(428, "Precondition Required")
+
         const val HEADER_PIN = "X-Fold-Pin"
         const val HEADER_TOKEN = "X-Fold-Token"
         const val HEADER_CONFIRM = "X-Fold-Confirm"
