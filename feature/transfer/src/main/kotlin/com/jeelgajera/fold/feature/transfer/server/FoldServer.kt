@@ -50,7 +50,7 @@ import kotlinx.serialization.json.Json
  * through `PathGuard`: canonicalise, refuse the vault, refuse anything outside an
  * explicitly rooted allowlist. Keeping the check one layer down means a new route
  * added later -- or a bug in one of these -- cannot reach around it. The routes
- * below are deliberately dull.
+ * below perform no path resolution of their own.
  *
  * The second layer is [serverRoot]: even inside the allowlist, this server only
  * serves what the user chose to share. Browsing the whole device from the UI is

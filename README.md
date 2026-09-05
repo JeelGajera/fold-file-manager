@@ -38,19 +38,16 @@ supported mode with its own screens, not an error state.
 
 ## Status
 
-**Partially verified, and still in bring-up.** This was written in an
-environment with no Android SDK and no access to Google's Maven repository, so
-most of it went unbuilt. CI now does that work — see
-[`docs/STATUS.md`](docs/STATUS.md) for the current line between what has been
-verified and what has not.
+FOLD is under active development and not yet released.
 
-What *is* verified: dependency resolution and Android resource compilation, in
-CI; and the security-critical pure-JVM logic — path traversal, MIME resolution,
-server auth and rate limiting — which compiles and passes **63 tests, 0
-failures**. Those tests ran against the real repo sources, not a copy.
+CI assembles the app and runs the unit test suites on every push. The storage
+layer compiles and its suites pass — 63 tests covering path traversal, MIME
+resolution and the LAN server's authentication and rate limiting. The Compose
+and Hilt modules are still being brought up, and no instrumented tests exist
+yet.
 
-What is not: the Android half of the codebase still has compile errors to work
-through, and nothing has run on a device.
+[`docs/STATUS.md`](docs/STATUS.md) tracks what is implemented, what CI verifies,
+and what remains before a release.
 
 ---
 

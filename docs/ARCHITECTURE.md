@@ -1,6 +1,6 @@
 # Architecture
 
-## The decision everything else hangs off
+## The provider abstraction
 
 Every read and write in FOLD passes through one interface:
 
@@ -22,7 +22,7 @@ Two implementations:
   `MANAGE_EXTERNAL_STORAGE`. The primary path.
 - **`SafDocumentProvider`** — Storage Access Framework tree grants. The fallback.
 
-### Why this is not ceremony
+### Why the indirection is worth it
 
 Play Store review for All Files Access can be refused, and the policy can
 tighten after a release. An app hard-wired to raw file access dies with that
@@ -62,8 +62,8 @@ Indexer   ──┘
 ```
 
 A new endpoint added later, or a bug in an existing one, cannot route around it.
-`FoldServer`'s handlers are deliberately dull: they convert a string to an
-`FsPath` and hand it over.
+`FoldServer`'s handlers do no path resolution of their own: they convert a
+string to an `FsPath` and hand it over.
 
 The guard runs three checks in order:
 
