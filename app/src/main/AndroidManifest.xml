@@ -8,7 +8,7 @@
         This is the permission the whole app exists for, and it is declared here
         with no apology: FOLD's core function is file management, which is one of
         Play's approved categories for it. Browsing through MediaStore instead is
-        exactly the bug this app was written to fix -- a media index does not know
+        exactly the bug this app was written to fix — a media index does not know
         about .md, .log, .epub or a firmware image, so a MediaStore-backed file
         manager cannot show a user files that are plainly on their phone.
 
