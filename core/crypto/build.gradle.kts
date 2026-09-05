@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
@@ -23,8 +24,11 @@ android {
 }
 
 dependencies {
-    implementation(project(":core:storage"))
+    // api, not implementation: VaultRepository's signatures speak in FsPath and
+    // FileSystemProvider, so callers need those types on their compile classpath.
+    api(project(":core:storage"))
     implementation(libs.androidx.core.ktx)
+    implementation(libs.kotlinx.serialization.json)
     api(libs.androidx.biometric)
     api(libs.kotlinx.coroutines.android)
 
