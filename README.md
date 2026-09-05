@@ -40,11 +40,11 @@ supported mode with its own screens, not an error state.
 
 FOLD is under active development and not yet released.
 
-CI assembles the app and runs the unit test suites on every push. The storage
-layer compiles and its suites pass — 63 tests covering path traversal, MIME
-resolution and the LAN server's authentication and rate limiting. The Compose
-and Hilt modules are still being brought up, and no instrumented tests exist
-yet.
+CI assembles a debug APK and runs the unit test suites on every push and pull
+request. Every module compiles, and the suites pass — 74 tests covering path
+canonicalisation and containment, MIME resolution, the vault blob format, and
+the LAN server's authentication and rate limiting. No instrumented tests exist
+yet, and the app has not been run on the device matrix.
 
 [`docs/STATUS.md`](docs/STATUS.md) tracks what is implemented, what CI verifies,
 and what remains before a release.
