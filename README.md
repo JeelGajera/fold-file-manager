@@ -45,7 +45,10 @@ first build. See [`docs/STATUS.md`](docs/STATUS.md) for exactly what that means,
 what is most likely to break, and what to check first.
 
 The architecture, the security boundaries and the test suites are written to be
-correct on inspection. They have not been verified by a compiler.
+correct on inspection. They have not been verified by a compiler — but CI does
+that: `.github/workflows/build.yml` assembles the app and runs the tests on
+GitHub's runners, which have the SDK and the repository access this was written
+without. Its first run is the bring-up list.
 
 ---
 
