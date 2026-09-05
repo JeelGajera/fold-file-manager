@@ -1,6 +1,7 @@
 package com.jeelgajera.fold.feature.vault
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -305,7 +306,7 @@ private fun UnlockedVault(
                         color = colors.accentBodyText,
                         maxLines = 1,
                         modifier = Modifier
-                            .androidxClickable(onLock)
+                            .clickable(role = Role.Button, onClick = onLock)
                             .padding(vertical = 6.dp),
                     )
                 }
@@ -375,8 +376,6 @@ private fun UnlockedVault(
     }
 }
 
-private fun Modifier.androidxClickable(onClick: () -> Unit) =
-    androidx.compose.foundation.clickable(role = Role.Button, onClick = onClick)
 
 /** The lit cells of the 5x5 lock mark, as indices into a row-major grid. */
 private val LOCK_MARK = setOf(2, 6, 7, 8, 11, 13, 16, 17, 18, 21, 22, 23)

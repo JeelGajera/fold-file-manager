@@ -104,3 +104,7 @@ verify it rather than asking you to take it on faith.
 ## Licence
 
 MIT. See [`LICENSE`](LICENSE).
+
+Archivo and Doto are bundled under the SIL Open Font License 1.1; the licence
+text ships alongside them in
+[`core/design/src/main/res/font/OFL.txt`](core/design/src/main/res/font/OFL.txt).

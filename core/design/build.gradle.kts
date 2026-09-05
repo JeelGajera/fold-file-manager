@@ -33,7 +33,6 @@ dependencies {
     // Material3 is used as a skeleton only (ripple, window insets, text field
     // plumbing). Its colour and type defaults are never surfaced -- see FoldTheme.
     api(libs.androidx.compose.material3)
-    api(libs.androidx.compose.ui.text.google.fonts)
     api(libs.androidx.compose.ui.tooling.preview)
     debugApi(libs.androidx.compose.ui.tooling)
 

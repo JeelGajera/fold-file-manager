@@ -2,6 +2,7 @@ package com.jeelgajera.fold.core.design.component
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +34,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.jeelgajera.fold.core.design.theme.FoldMotion
+import com.jeelgajera.fold.core.design.theme.FoldRules
 import com.jeelgajera.fold.core.design.theme.FoldSizing
 import com.jeelgajera.fold.core.design.theme.FoldTheme
 import com.jeelgajera.fold.core.design.theme.foldTween
@@ -185,7 +187,7 @@ fun FoldSegmentedControl(
     Row(
         modifier
             .fillMaxWidth()
-            .androidxBorder(colors.onBackground.copy(alpha = 0.2f)),
+            .border(FoldRules.hairline, colors.onBackground.copy(alpha = 0.2f), RectangleShape),
     ) {
         options.forEachIndexed { index, option ->
             val active = index == selectedIndex
@@ -219,5 +221,3 @@ fun FoldSegmentedControl(
     }
 }
 
-private fun Modifier.androidxBorder(color: Color) =
-    androidx.compose.foundation.border(1.dp, color, RectangleShape)

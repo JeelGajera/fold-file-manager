@@ -33,6 +33,7 @@ import com.jeelgajera.fold.core.storage.index.FoldDatabase
 import com.jeelgajera.fold.core.storage.stats.VolumeStats
 import com.jeelgajera.fold.core.storage.util.Formatting
 import androidx.glance.action.ActionParameters
+import androidx.glance.layout.defaultWeight
 
 /**
  * FOLD's two home-screen widgets.
