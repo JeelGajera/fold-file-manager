@@ -47,7 +47,9 @@ the LAN server's authentication and rate limiting. No instrumented tests exist
 yet, and the app has not been run on the device matrix.
 
 [`docs/STATUS.md`](docs/STATUS.md) tracks what is implemented, what CI verifies,
-and what remains before a release.
+and what remains before a release. [`docs/HANDOFF.md`](docs/HANDOFF.md) is the
+developer handoff: how to get building locally, which decisions are
+load-bearing, and the ordered list of what to do next.
 
 ---
 
