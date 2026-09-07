@@ -1,15 +1,20 @@
 package com.jeelgajera.fold.core.design.theme
 
+import android.app.Activity
+import android.content.ContextWrapper
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.ProvidableCompositionLocal
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.text.TextStyle
+import androidx.core.view.WindowCompat
 
 /** Which ground the app is painted on. Mirrors the drawer's LIGHT/DARK/SYSTEM control. */
 enum class FoldThemeMode { LIGHT, DARK, SYSTEM }
@@ -47,6 +52,26 @@ fun FoldTheme(
     }
     val colors = if (dark) FoldDarkColors else FoldLightColors
 
+    // The system bars follow FOLD's own theme, not the platform's.
+    //
+    // `enableEdgeToEdge()` keys the bar icons off the system dark-mode setting,
+    // which is the wrong source once the app carries its own LIGHT/DARK control:
+    // a phone in dark mode with FOLD set to light drew white status icons on the
+    // light paper, leaving the clock and battery invisible.
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        val window = view.context.findActivity()?.window
+        DisposableEffect(window, dark) {
+            if (window != null) {
+                WindowCompat.getInsetsController(window, view).apply {
+                    isAppearanceLightStatusBars = !dark
+                    isAppearanceLightNavigationBars = !dark
+                }
+            }
+            onDispose { }
+        }
+    }
+
     CompositionLocalProvider(
         LocalFoldColors provides colors,
         LocalFoldTypography provides FoldTypographyDefaults,
@@ -60,6 +85,13 @@ fun FoldTheme(
             content = content,
         )
     }
+}
+
+/** Unwraps the context chain, which is a `ContextWrapper` under a Compose view. */
+private tailrec fun android.content.Context.findActivity(): Activity? = when (this) {
+    is Activity -> this
+    is ContextWrapper -> baseContext.findActivity()
+    else -> null
 }
 
 /**
@@ -89,11 +121,14 @@ fun FoldText(
 /** Short accessors so call sites read `FoldTheme.colors.accent`. */
 object FoldTheme {
     val colors: FoldColors
-        @Composable @ReadOnlyComposable get() = LocalFoldColors.current
+        @Composable @ReadOnlyComposable
+        get() = LocalFoldColors.current
 
     val typography: FoldTypography
-        @Composable @ReadOnlyComposable get() = LocalFoldTypography.current
+        @Composable @ReadOnlyComposable
+        get() = LocalFoldTypography.current
 
     val reducedMotion: Boolean
-        @Composable @ReadOnlyComposable get() = LocalFoldReducedMotion.current
+        @Composable @ReadOnlyComposable
+        get() = LocalFoldReducedMotion.current
 }

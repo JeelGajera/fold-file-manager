@@ -10,6 +10,7 @@
     <string name="search_line">L %1$d</string>
     <string name="search_where_name">NAME</string>
     <string name="search_where_contents">CONTENTS</string>
+    <string name="search_where_both">NAME · CONTENTS</string>
     <string name="search_on">ON</string>
     <string name="search_off">OFF</string>
 

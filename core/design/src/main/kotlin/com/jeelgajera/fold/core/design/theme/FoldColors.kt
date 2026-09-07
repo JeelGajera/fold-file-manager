@@ -22,6 +22,15 @@ data class FoldColors(
     val background: Color,
     val surface: Color,
     val surfaceGlass: Color,
+    /**
+     * Opaque ground for surfaces that float above content -- the dock and the
+     * drawer -- used when translucency is unavailable or unwanted.
+     *
+     * This exists as a role because those two surfaces previously carried the
+     * dark value inline, which meant they stayed black in light mode however the
+     * rest of the app was themed.
+     */
+    val surfaceRaised: Color,
     val onBackground: Color,
     val onBackgroundMuted: Color,
     val onBackgroundDisabled: Color,
@@ -42,6 +51,7 @@ val FoldDarkColors = FoldColors(
     background = Color(0xFF0C0B0B),
     surface = Color(0xFFF3F2F2).copy(alpha = 0.06f),
     surfaceGlass = Color(0xFF100F0F).copy(alpha = 0.62f),
+    surfaceRaised = Color(0xFF100F0F),
     onBackground = Color(0xFFF3F2F2),
     onBackgroundMuted = Color(0xFFF3F2F2).copy(alpha = 0.62f),
     onBackgroundDisabled = Color(0xFFF3F2F2).copy(alpha = 0.46f),
@@ -68,7 +78,14 @@ val FoldDarkColors = FoldColors(
 val FoldLightColors = FoldColors(
     background = Color(0xFFF3F2F2),
     surface = Color(0xFFEAE9E9),
-    surfaceGlass = Color(0xFFF3F2F2).copy(alpha = 0.72f),
+    // A shade *darker* than the paper, mirroring how the dark glass sits a shade
+    // lighter than its ground. Deriving it as the background colour, which is
+    // what it was, gave the floating dock zero contrast against the page it
+    // floats over.
+    surfaceGlass = Color(0xFFE6E5E5).copy(alpha = 0.86f),
+    // Lifted just off the paper, so a floating surface reads as above the page
+    // rather than as a hole in it.
+    surfaceRaised = Color(0xFFEDECEC),
     onBackground = Color(0xFF201E1D),
     onBackgroundMuted = Color(0xFF201E1D).copy(alpha = 0.62f),
     onBackgroundDisabled = Color(0xFF201E1D).copy(alpha = 0.46f),

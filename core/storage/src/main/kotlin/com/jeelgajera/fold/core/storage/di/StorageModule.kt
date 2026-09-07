@@ -47,8 +47,7 @@ object StorageModule {
     @Provides
     @Singleton
     @ApplicationScope
-    fun applicationScope(@IoDispatcher io: CoroutineDispatcher): CoroutineScope =
-        CoroutineScope(SupervisorJob() + io)
+    fun applicationScope(@IoDispatcher io: CoroutineDispatcher): CoroutineScope = CoroutineScope(SupervisorJob() + io)
 
     @Provides
     @Singleton
@@ -58,7 +57,7 @@ object StorageModule {
             // schema change makes the old rows unreadable, throwing them away and
             // re-walking is strictly better than shipping migration code that has
             // to be right about data the device can regenerate for free.
-            .fallbackToDestructiveMigration()
+            .fallbackToDestructiveMigration(dropAllTables = true)
             .build()
 
     @Provides
@@ -98,8 +97,6 @@ object StorageModule {
     ): FileIndexer = FileIndexer(dao, factory.guard(), io)
 
     @Provides
-    fun contentSearcher(
-        factory: FileSystemProviderFactory,
-        @IoDispatcher io: CoroutineDispatcher,
-    ): ContentSearcher = ContentSearcher(factory.current, io)
+    fun contentSearcher(factory: FileSystemProviderFactory, @IoDispatcher io: CoroutineDispatcher): ContentSearcher =
+        ContentSearcher(factory.current, io)
 }

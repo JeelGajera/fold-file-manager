@@ -27,6 +27,7 @@ import androidx.room.PrimaryKey
         Index("extension"),
         Index("category"),
         Index("lastModified"),
+        Index("isNoise"),
         Index("sizeBytes"),
     ],
 )
@@ -51,6 +52,14 @@ data class FileIndexEntity(
     val lastModified: Long,
     val isDirectory: Boolean,
     val isHidden: Boolean,
+
+    /**
+     * App-generated churn: caches, thumbnails, half-written downloads.
+     *
+     * Recorded, never acted on at index time -- the row is written either way.
+     * Only the curated surfaces filter on it. See [NoiseFilter].
+     */
+    val isNoise: Boolean,
 
     /** When FOLD last saw this entry. Drives reconciliation: stale rows are pruned. */
     val indexedAt: Long,

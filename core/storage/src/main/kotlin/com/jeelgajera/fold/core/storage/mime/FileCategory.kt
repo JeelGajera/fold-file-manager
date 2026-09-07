@@ -19,6 +19,26 @@ enum class FileCategory {
     ;
 
     companion object {
+
+        /**
+         * The category a file belongs to, given where it lives and what it is.
+         *
+         * [DOWNLOADS] is a *location*, not a MIME type -- it is the one bucket a
+         * user thinks of as a place -- so it is decided first and wins outright.
+         * That keeps the seven categories disjoint, which the storage meter
+         * depends on: a PDF counted as both a download and a document would be
+         * drawn twice and the bands would sum past the volume's used bytes.
+         */
+        fun of(path: String, mime: String): FileCategory = if (isUnderDownloads(path)) DOWNLOADS else ofMime(mime)
+
+        /**
+         * Matched segment-wise so `/Download` does not also catch a user's
+         * `/Downloaded-2019` folder.
+         */
+        private fun isUnderDownloads(path: String): Boolean = path.split('/').any { segment ->
+            segment.equals("Download", ignoreCase = true) || segment.equals("Downloads", ignoreCase = true)
+        }
+
         fun ofMime(mime: String): FileCategory = when {
             mime.startsWith("image/") -> IMAGES
             mime.startsWith("video/") -> VIDEO
@@ -36,17 +56,16 @@ enum class FileCategory {
          * small it is -- opening an unknown binary to grep it is how a file
          * manager ends up reading a wallet or a key by accident.
          */
-        fun isTextLike(mime: String): Boolean =
-            mime.startsWith("text/") ||
-                mime in setOf(
-                    "application/json",
-                    "application/yaml",
-                    "application/toml",
-                    "application/sql",
-                    "application/x-sh",
-                    "application/xml",
-                    "application/javascript",
-                )
+        fun isTextLike(mime: String): Boolean = mime.startsWith("text/") ||
+            mime in setOf(
+                "application/json",
+                "application/yaml",
+                "application/toml",
+                "application/sql",
+                "application/x-sh",
+                "application/xml",
+                "application/javascript",
+            )
 
         private val DOCUMENT_TYPES = setOf(
             "application/pdf",

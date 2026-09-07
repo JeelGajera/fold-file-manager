@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +20,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
@@ -30,11 +32,7 @@ import com.jeelgajera.fold.core.design.theme.FoldTheme
 import com.jeelgajera.fold.core.design.theme.foldTween
 
 /** One tab in the floating dock. */
-data class FoldDockTab(
-    val label: String,
-    val paths: List<String>,
-    val filledPaths: List<String> = emptyList(),
-)
+data class FoldDockTab(val label: String, val paths: List<String>, val filledPaths: List<String> = emptyList())
 
 /**
  * The floating tab dock.
@@ -102,6 +100,10 @@ fun FoldDock(
                 Column(
                     Modifier
                         .size(FoldSizing.dockItem)
+                        // Clip before selectable: the press indication is bounded
+                        // by the shape it is clipped to, and an unclipped tab
+                        // draws a square ripple over a circular indicator.
+                        .clip(CircleShape)
                         .selectable(
                             selected = active,
                             role = Role.Tab,

@@ -3,10 +3,10 @@ package com.jeelgajera.fold.feature.browser
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
@@ -25,7 +25,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.DotCount
 import com.jeelgajera.fold.core.design.component.DotMeter
@@ -55,7 +55,7 @@ import com.jeelgajera.fold.core.storage.util.Formatting
 @Composable
 fun HomeScreen(
     onOpenCategory: (FileCategory) -> Unit,
-    onOpenPath: (FsPath) -> Unit,
+    onOpenFile: (FsPath) -> Unit,
     onBrowseAll: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: BrowserViewModel = hiltViewModel(),
@@ -184,7 +184,7 @@ fun HomeScreen(
                 meta = "${Formatting.bytes(entry.sizeBytes)} · ${entry.parentPath.substringAfterLast('/')}",
                 badge = entry.extension.uppercase().take(4).ifEmpty { "?" },
                 badgeAccent = entry.mimeType == "text/markdown",
-                onClick = { onOpenPath(FsPath.raw(entry.parentPath)) },
+                onClick = { onOpenFile(FsPath.raw(entry.path)) },
             )
         }
 
@@ -202,12 +202,7 @@ fun HomeScreen(
 }
 
 @Composable
-private fun CategoryCell(
-    tile: CategoryTile,
-    largestBytes: Long,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+private fun CategoryCell(tile: CategoryTile, largestBytes: Long, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val colors = FoldTheme.colors
     Column(
         modifier
