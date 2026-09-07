@@ -11,6 +11,13 @@
     <string name="home_recent">RECENT</string>
     <string name="home_all_files">ALL FILES</string>
     <string name="home_item_count">%1$s items</string>
+    <string name="browse_loading">Reading folder…</string>
+    <string name="browse_empty">This folder is empty.</string>
+    <string name="browse_empty_maybe_hidden">Nothing here. If you expected files, this folder may hold only hidden ones — turn on HIDDEN above.</string>
+    <string name="category_count">%1$s files</string>
+    <string name="category_show_app_files">+ %1$s app files hidden — show</string>
+    <string name="category_hide_app_files">— hide app caches and temporary files</string>
+    <string name="category_empty">Nothing in this category yet. FOLD fills the index in the background.</string>
     <string name="home_empty_index">Nothing indexed yet. FOLD builds its index in the background, and search gets faster as it does.</string>
 
     <!-- Browse -->

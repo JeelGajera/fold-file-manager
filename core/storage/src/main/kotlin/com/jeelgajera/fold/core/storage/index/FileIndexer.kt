@@ -27,11 +27,7 @@ import java.util.ArrayDeque
  * depth should not be able to overflow the stack, and a cancelled index should
  * stop at the next directory rather than at the end.
  */
-class FileIndexer(
-    private val dao: FileIndexDao,
-    private val guard: PathGuard,
-    private val io: CoroutineDispatcher,
-) {
+class FileIndexer(private val dao: FileIndexDao, private val guard: PathGuard, private val io: CoroutineDispatcher) {
 
     /**
      * Indexes [root] and everything under it.
@@ -39,50 +35,47 @@ class FileIndexer(
      * @param onProgress called with the running file count, for the settings screen.
      * @return how many entries were written.
      */
-    suspend fun indexTree(
-        root: File,
-        maxDepth: Int = DEFAULT_MAX_DEPTH,
-        onProgress: (Int) -> Unit = {},
-    ): Int = withContext(io) {
-        val sweptAt = System.currentTimeMillis()
-        var written = 0
+    suspend fun indexTree(root: File, maxDepth: Int = DEFAULT_MAX_DEPTH, onProgress: (Int) -> Unit = {}): Int =
+        withContext(io) {
+            val sweptAt = System.currentTimeMillis()
+            var written = 0
 
-        val queue = ArrayDeque<Pair<File, Int>>()
-        queue.add(root to 0)
-        // Canonical paths already visited. A symlinked directory that points back
-        // up the tree would otherwise index the same files forever.
-        val seen = HashSet<String>()
+            val queue = ArrayDeque<Pair<File, Int>>()
+            queue.add(root to 0)
+            // Canonical paths already visited. A symlinked directory that points back
+            // up the tree would otherwise index the same files forever.
+            val seen = HashSet<String>()
 
-        while (queue.isNotEmpty()) {
-            currentCoroutineContext().ensureActive()
-            val (dir, depth) = queue.removeFirst()
-            if (depth > maxDepth) continue
-            if (guard.isDenied(dir)) continue
-
-            val canonical = runCatching { dir.canonicalPath }.getOrNull() ?: continue
-            if (!seen.add(canonical)) continue
-
-            val children = runCatching { dir.listFiles() }.getOrNull() ?: continue
-            val batch = ArrayList<FileIndexEntity>(children.size)
-
-            for (child in children) {
+            while (queue.isNotEmpty()) {
                 currentCoroutineContext().ensureActive()
-                if (guard.isDenied(child)) continue
+                val (dir, depth) = queue.removeFirst()
+                if (depth > maxDepth) continue
+                if (guard.isDenied(dir)) continue
 
-                val isDirectory = child.isDirectory
-                if (isDirectory) queue.add(child to depth + 1)
-                batch.add(child.toIndexEntity(dir.path, sweptAt, isDirectory))
+                val canonical = runCatching { dir.canonicalPath }.getOrNull() ?: continue
+                if (!seen.add(canonical)) continue
+
+                val children = runCatching { dir.listFiles() }.getOrNull() ?: continue
+                val batch = ArrayList<FileIndexEntity>(children.size)
+
+                for (child in children) {
+                    currentCoroutineContext().ensureActive()
+                    if (guard.isDenied(child)) continue
+
+                    val isDirectory = child.isDirectory
+                    if (isDirectory) queue.add(child to depth + 1)
+                    batch.add(child.toIndexEntity(dir.path, sweptAt, isDirectory))
+                }
+
+                if (batch.isNotEmpty()) {
+                    dao.replaceDirectory(dir.path, batch, sweptAt)
+                    written += batch.size
+                    onProgress(written)
+                }
             }
 
-            if (batch.isNotEmpty()) {
-                dao.replaceDirectory(dir.path, batch, sweptAt)
-                written += batch.size
-                onProgress(written)
-            }
+            written
         }
-
-        written
-    }
 
     /** Re-indexes one directory. Cheap enough to run on every FileObserver overflow. */
     suspend fun indexDirectory(dir: File): Int = withContext(io) {
@@ -108,12 +101,13 @@ class FileIndexer(
             category = if (isDirectory) {
                 FileCategory.OTHER.name
             } else {
-                FileCategory.ofMime(mime).name
+                FileCategory.of(path, mime).name
             },
             sizeBytes = if (isDirectory) 0L else length(),
             lastModified = lastModified(),
             isDirectory = isDirectory,
             isHidden = name.startsWith('.'),
+            isNoise = NoiseFilter.isNoise(path, name, isDirectory),
             indexedAt = sweptAt,
         )
     }

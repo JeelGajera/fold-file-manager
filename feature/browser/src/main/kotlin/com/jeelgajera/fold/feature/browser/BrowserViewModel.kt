@@ -16,12 +16,15 @@ import com.jeelgajera.fold.core.storage.provider.FsError
 import com.jeelgajera.fold.core.storage.stats.StorageSnapshot
 import com.jeelgajera.fold.core.storage.stats.VolumeStats
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -53,12 +56,27 @@ data class HomeUiState(
     val indexedFiles: Int = 0,
 )
 
-data class CategoryTile(
-    val category: FileCategory,
-    val label: String,
-    val count: Int,
-    val bytes: Long,
+/**
+ * What the category listing is showing.
+ *
+ * [files] comes from the index rather than from a directory read: a category is
+ * a property of a file, not a place on disk.
+ */
+data class CategoryUiState(
+    val category: FileCategory? = null,
+    val label: String = "",
+    val files: List<FileIndexEntity> = emptyList(),
+    /** Everything in the category, including the app churn currently filtered out. */
+    val totalInCategory: Int = 0,
+    val includeNoise: Boolean = false,
 ) {
+    val totalBytes: Long get() = files.sumOf { it.sizeBytes }
+
+    /** How many rows curation is holding back. Zero means the list is complete. */
+    val filteredOut: Int get() = (totalInCategory - files.size).coerceAtLeast(0)
+}
+
+data class CategoryTile(val category: FileCategory, val label: String, val count: Int, val bytes: Long) {
     /**
      * How full this category is relative to the largest one, as 0..3 dots.
      *
@@ -85,6 +103,9 @@ class BrowserViewModel @Inject constructor(
     val browse: StateFlow<BrowseUiState> = _browse.asStateFlow()
 
     private var watcher: Job? = null
+
+    private val categoryFilter = MutableStateFlow<FileCategory?>(null)
+    private val categoryIncludeNoise = MutableStateFlow(false)
 
     /**
      * The home screen, assembled from the index.
@@ -116,6 +137,49 @@ class BrowserViewModel @Inject constructor(
             indexedFiles = count,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeUiState())
+
+    /**
+     * The files in the category the home screen last opened.
+     *
+     * Re-queried when the hidden-files preference changes, for the same reason
+     * a directory listing is: the toggle changes what the answer contains.
+     */
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val category: StateFlow<CategoryUiState> = combine(
+        categoryFilter,
+        categoryIncludeNoise,
+        settings.settings.map { it.showHiddenFiles },
+    ) { selected, includeNoise, includeHidden -> Triple(selected, includeNoise, includeHidden) }
+        .flatMapLatest { (selected, includeNoise, includeHidden) ->
+            if (selected == null) {
+                flowOf(CategoryUiState())
+            } else {
+                combine(
+                    indexDao.observeByCategory(selected.name, includeHidden, includeNoise, CATEGORY_LIMIT),
+                    indexDao.observeCategoryCount(selected.name, includeHidden),
+                ) { files, total ->
+                    CategoryUiState(
+                        category = selected,
+                        label = selected.label(),
+                        files = files,
+                        totalInCategory = total,
+                        includeNoise = includeNoise,
+                    )
+                }
+            }
+        }
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), CategoryUiState())
+
+    /** Points the category listing at [category], curated by default. */
+    fun openCategory(category: FileCategory) {
+        categoryFilter.value = category
+        categoryIncludeNoise.value = false
+    }
+
+    /** Lets the category listing show app caches, thumbnails and part-files too. */
+    fun setCategoryIncludeNoise(include: Boolean) {
+        categoryIncludeNoise.value = include
+    }
 
     init {
         viewModelScope.launch {
@@ -232,6 +296,15 @@ class BrowserViewModel @Inject constructor(
             _browse.value = BrowseUiState()
             providerFactory.current.capabilities.roots.firstOrNull()?.let { open(it.path) }
         }
+    }
+
+    private companion object {
+        /**
+         * A category listing is a browsing surface, not a report. Past a few
+         * hundred rows the answer to "where did my storage go" is the same and
+         * the query stops being instant.
+         */
+        const val CATEGORY_LIMIT = 500
     }
 
     private fun watch(path: FsPath) {

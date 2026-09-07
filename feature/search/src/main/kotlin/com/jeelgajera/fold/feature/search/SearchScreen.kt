@@ -39,7 +39,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.FoldFilterChip
 import com.jeelgajera.fold.core.design.component.FoldIconButton
@@ -176,11 +176,11 @@ fun SearchScreen(
             }
         }
 
-        items(state.results, key = { "${it.entry.path}:${it.contentMatch?.lineNumber ?: 0}" }) { result ->
+        items(state.results, key = { it.entry.path }) { result ->
             ResultRow(
                 result = result,
                 query = state.query,
-                onClick = { onOpenPath(FsPath.raw(result.entry.parentPath)) },
+                onClick = { onOpenPath(FsPath.raw(result.entry.path)) },
             )
         }
 
@@ -198,11 +198,7 @@ fun SearchScreen(
 }
 
 @Composable
-private fun SearchField(
-    query: String,
-    onQueryChange: (String) -> Unit,
-    onClear: () -> Unit,
-) {
+private fun SearchField(query: String, onQueryChange: (String) -> Unit, onClear: () -> Unit) {
     val colors = FoldTheme.colors
 
     Row(
@@ -244,8 +240,6 @@ private fun SearchField(
             },
         )
 
-        BlinkingCaret()
-
         // The clear control keeps its 44dp target and only fades, so the row does
         // not reflow the moment the field goes from empty to non-empty.
         Box(Modifier.alpha(if (query.isEmpty()) 0f else 1f)) {
@@ -263,33 +257,6 @@ private fun SearchField(
             }
         }
     }
-}
-
-/**
- * The blinking mark beside the field.
- *
- * Under reduced motion it holds steady instead of blinking, which the token
- * file's reduced-motion contract requires by name.
- */
-@Composable
-private fun BlinkingCaret() {
-    val colors = FoldTheme.colors
-    if (FoldTheme.reducedMotion) {
-        Box(Modifier.width(2.dp).height(19.dp).background(colors.accent))
-        return
-    }
-
-    val transition = rememberInfiniteTransition(label = "SearchCaret")
-    val alpha by transition.animateFloat(
-        initialValue = 1f,
-        targetValue = 0.2f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(1050, easing = FoldMotion.Linear),
-            repeatMode = RepeatMode.Reverse,
-        ),
-        label = "SearchCaretAlpha",
-    )
-    Box(Modifier.width(2.dp).height(19.dp).alpha(alpha).background(colors.accent))
 }
 
 @Composable
@@ -326,10 +293,13 @@ private fun ResultRow(result: SearchResult, query: String, onClick: () -> Unit) 
                 )
             }
             Text(
-                text = if (result.contentMatch != null) {
-                    stringResource(R.string.search_where_contents)
-                } else {
-                    stringResource(R.string.search_where_name)
+                text = when {
+                    result.matchedName && result.contentMatch != null ->
+                        stringResource(R.string.search_where_both)
+
+                    result.contentMatch != null -> stringResource(R.string.search_where_contents)
+
+                    else -> stringResource(R.string.search_where_name)
                 },
                 style = FoldTheme.typography.labelS,
                 color = colors.onBackground.copy(alpha = 0.5f),
@@ -392,12 +362,11 @@ private fun highlight(
     }
 }
 
-
 @Composable
 private fun SearchScope.label(): String = stringResource(
     when (this) {
         SearchScope.ALL_STORAGE -> R.string.search_scope_all
         SearchScope.THIS_FOLDER -> R.string.search_scope_folder
         SearchScope.VAULT -> R.string.search_scope_vault
-    }
+    },
 )

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -15,7 +16,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.FoldAppBar
 import com.jeelgajera.fold.core.design.component.FoldDock
@@ -30,10 +33,11 @@ import com.jeelgajera.fold.core.storage.model.FsEntry
 import com.jeelgajera.fold.core.storage.model.FsPath
 import com.jeelgajera.fold.core.storage.permission.StorageAccess
 import com.jeelgajera.fold.core.storage.permission.StorageAccessLevel
-import com.jeelgajera.fold.core.storage.provider.SafDocumentProvider
 import com.jeelgajera.fold.core.storage.prefs.ThemeMode
+import com.jeelgajera.fold.core.storage.provider.SafDocumentProvider
 import com.jeelgajera.fold.feature.browser.BrowseScreen
 import com.jeelgajera.fold.feature.browser.BrowserViewModel
+import com.jeelgajera.fold.feature.browser.CategoryScreen
 import com.jeelgajera.fold.feature.browser.HiddenFilesScreen
 import com.jeelgajera.fold.feature.browser.HomeScreen
 import com.jeelgajera.fold.feature.browser.LimitedAccessScreen
@@ -55,6 +59,7 @@ private enum class Destination(val isDockTab: Boolean = false) {
     BROWSE(isDockTab = true),
     SHARE(isDockTab = true),
     VAULT(isDockTab = true),
+    CATEGORY,
     SEARCH,
     HIDDEN,
     LIMITED,
@@ -63,11 +68,20 @@ private enum class Destination(val isDockTab: Boolean = false) {
     ONBOARDING,
     ;
 
+    /**
+     * Whether the floating dock belongs on this screen.
+     *
+     * Setup has nowhere to navigate to -- storage access has not been resolved
+     * yet -- so the dock would be four dead controls sitting on top of the two
+     * live ones.
+     */
+    val showsDock: Boolean get() = this != ONBOARDING
+
     /** Which dock tab lights up while this destination is showing. */
     val dockIndex: Int
         get() = when (this) {
             HOME -> 0
-            BROWSE, SEARCH, HIDDEN, LIMITED -> 1
+            BROWSE, SEARCH, HIDDEN, LIMITED, CATEGORY -> 1
             SHARE -> 2
             VAULT -> 3
             SETTINGS, GLYPH, ONBOARDING -> -1
@@ -93,12 +107,33 @@ fun FoldApp(
     val browserViewModel: BrowserViewModel = hiltViewModel()
     val settingsViewModel: SettingsViewModel = hiltViewModel()
 
-    val accessLevel = remember { StorageAccess.level(context) }
+    // Storage access is re-read on every resume, never cached for the life of the
+    // composition. Neither of the two ways it changes -- the system All Files
+    // screen, and a revoke in settings -- returns a result to the app, so a
+    // remembered value is stale the moment the user acts on either.
+    var accessLevel by remember { mutableStateOf(StorageAccess.level(context)) }
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        val current = StorageAccess.level(context)
+        if (current != accessLevel) {
+            accessLevel = current
+            browserViewModel.refreshAccess()
+        }
+    }
+
     var destination by remember {
         mutableStateOf(
             // A phone with nothing granted has exactly one useful screen.
-            if (accessLevel == StorageAccessLevel.NONE) Destination.ONBOARDING else Destination.HOME
+            if (accessLevel == StorageAccessLevel.NONE) Destination.ONBOARDING else Destination.HOME,
         )
+    }
+
+    // Setup is over the moment access exists, however it was granted. Leaving the
+    // user on the rationale screen after they pressed Allow is the most confusing
+    // thing this flow could do, and it is what happens if nothing watches for it.
+    LaunchedEffect(accessLevel, destination) {
+        if (accessLevel != StorageAccessLevel.NONE && destination == Destination.ONBOARDING) {
+            destination = Destination.HOME
+        }
     }
     var drawerOpen by remember { mutableStateOf(false) }
 
@@ -115,10 +150,15 @@ fun FoldApp(
     BackHandler(enabled = drawerOpen || destination != Destination.HOME) {
         when {
             drawerOpen -> drawerOpen = false
+
             destination == Destination.BROWSE -> if (!browserViewModel.goUp()) {
                 destination = Destination.HOME
             }
+
+            destination == Destination.CATEGORY -> destination = Destination.HOME
+
             destination == Destination.HOME -> Unit
+
             else -> destination = Destination.HOME
         }
     }
@@ -134,6 +174,7 @@ fun FoldApp(
             )
         },
         dock = {
+            if (!destination.showsDock) return@FoldScaffold
             FoldDock(
                 tabs = dockTabs(),
                 selectedIndex = destination.dockIndex.coerceAtLeast(0),
@@ -161,12 +202,21 @@ fun FoldApp(
     ) {
         when (destination) {
             Destination.HOME -> HomeScreen(
-                onOpenCategory = { destination = Destination.BROWSE },
-                onOpenPath = { path ->
+                onOpenCategory = { category ->
+                    browserViewModel.openCategory(category)
+                    destination = Destination.CATEGORY
+                },
+                onOpenFile = { path -> openPathWithSystem(context, path) },
+                onBrowseAll = { destination = Destination.BROWSE },
+                viewModel = browserViewModel,
+            )
+
+            Destination.CATEGORY -> CategoryScreen(
+                onOpenFile = { path -> openPathWithSystem(context, path) },
+                onRevealIn = { path ->
                     browserViewModel.open(path)
                     destination = Destination.BROWSE
                 },
-                onBrowseAll = { destination = Destination.BROWSE },
                 viewModel = browserViewModel,
             )
 
@@ -178,10 +228,7 @@ fun FoldApp(
             )
 
             Destination.SEARCH -> SearchScreen(
-                onOpenPath = { path ->
-                    browserViewModel.open(path)
-                    destination = Destination.BROWSE
-                },
+                onOpenPath = { path -> openPathWithSystem(context, path) },
             )
 
             Destination.SHARE -> ShareScreen(
@@ -229,12 +276,7 @@ fun FoldApp(
 }
 
 @Composable
-private fun AppDrawer(
-    open: Boolean,
-    current: Destination,
-    onSelect: (Destination) -> Unit,
-    onDismiss: () -> Unit,
-) {
+private fun AppDrawer(open: Boolean, current: Destination, onSelect: (Destination) -> Unit, onDismiss: () -> Unit) {
     val context = LocalContext.current
     val colors = FoldTheme.colors
 
@@ -256,7 +298,7 @@ private fun AppDrawer(
                 stringResource(BrowserR.string.drawer_onboarding),
                 stringResource(BrowserR.string.drawer_replay),
                 Destination.ONBOARDING.name,
-            )
+            ),
         )
     }
 
@@ -311,7 +353,7 @@ private fun ThemeControl(viewModel: SettingsViewModel = hiltViewModel()) {
                     0 -> ThemeMode.LIGHT
                     1 -> ThemeMode.DARK
                     else -> ThemeMode.SYSTEM
-                }
+                },
             )
         },
     )
@@ -332,6 +374,7 @@ private fun dockTabs(): List<FoldDockTab> = listOf(
 @Composable
 private fun Destination.headerMeta(): String = when (this) {
     Destination.HOME -> "INTERNAL"
+    Destination.CATEGORY -> "CATEGORY"
     Destination.BROWSE -> "BROWSE"
     Destination.SEARCH -> "SEARCH"
     Destination.SHARE -> "WI-FI"
@@ -351,7 +394,11 @@ private fun Destination.headerMeta(): String = when (this) {
  * of producing "no app can perform this action".
  */
 private fun openWithSystem(context: android.content.Context, entry: FsEntry) {
-    val intent = ShareSheet.viewIntent(context, entry.path) ?: return
+    openPathWithSystem(context, entry.path)
+}
+
+private fun openPathWithSystem(context: android.content.Context, path: FsPath) {
+    val intent = ShareSheet.viewIntent(context, path) ?: return
     runCatching { context.startActivity(intent) }
 }
 

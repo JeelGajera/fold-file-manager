@@ -2,8 +2,8 @@ package com.jeelgajera.fold.feature.browser
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,10 +14,10 @@ import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material3.Text
@@ -31,7 +31,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.FoldFileRow
 import com.jeelgajera.fold.core.design.component.FoldIconButton
@@ -121,6 +121,26 @@ fun BrowseScreen(
             )
         }
 
+        // Browse had no state for "still reading" or "nothing here": both rendered
+        // as a blank screen with no explanation, which reads as the app being
+        // broken rather than as the folder being empty.
+        when {
+            state.loading && state.entries.isEmpty() -> BrowseNotice(
+                stringResource(R.string.browse_loading),
+            )
+
+            state.error == null && state.entries.isEmpty() -> BrowseNotice(
+                if (state.showHidden) {
+                    stringResource(R.string.browse_empty)
+                } else {
+                    // The distinction matters: a folder holding only dotfiles is
+                    // not empty, and saying so points at the control that reveals
+                    // them instead of leaving the user to guess.
+                    stringResource(R.string.browse_empty_maybe_hidden)
+                },
+            )
+        }
+
         if (state.gridView) {
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
@@ -168,12 +188,19 @@ fun BrowseScreen(
     }
 }
 
+/** A quiet one-line status where a listing would otherwise be blank. */
 @Composable
-private fun Breadcrumbs(
-    segments: List<String>,
-    gridView: Boolean,
-    onToggleView: () -> Unit,
-) {
+private fun BrowseNotice(text: String) {
+    Text(
+        text,
+        style = FoldTheme.typography.bodyS,
+        color = FoldTheme.colors.onBackgroundMuted,
+        modifier = Modifier.padding(16.dp),
+    )
+}
+
+@Composable
+private fun Breadcrumbs(segments: List<String>, gridView: Boolean, onToggleView: () -> Unit) {
     val colors = FoldTheme.colors
     Row(
         Modifier
@@ -228,8 +255,11 @@ private fun Breadcrumbs(
                                     .height(6.dp)
                                     .defaultMinSize(minWidth = 6.dp)
                                     .background(
-                                        if (on) colors.onBackground
-                                        else colors.onBackground.copy(alpha = 0.3f)
+                                        if (on) {
+                                            colors.onBackground
+                                        } else {
+                                            colors.onBackground.copy(alpha = 0.3f)
+                                        },
                                     ),
                             )
                         }
@@ -241,12 +271,7 @@ private fun Breadcrumbs(
 }
 
 @Composable
-private fun SelectionBar(
-    count: Int,
-    onShare: () -> Unit,
-    onDelete: () -> Unit,
-    onClear: () -> Unit,
-) {
+private fun SelectionBar(count: Int, onShare: () -> Unit, onDelete: () -> Unit, onClear: () -> Unit) {
     val colors = FoldTheme.colors
     Row(
         Modifier
@@ -294,12 +319,7 @@ private fun SelectionAction(label: String, onClick: () -> Unit) {
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-private fun GridTile(
-    entry: FsEntry,
-    selected: Boolean,
-    onClick: () -> Unit,
-    onLongClick: () -> Unit,
-) {
+private fun GridTile(entry: FsEntry, selected: Boolean, onClick: () -> Unit, onLongClick: () -> Unit) {
     val colors = FoldTheme.colors
     Column(
         Modifier
@@ -312,7 +332,13 @@ private fun GridTile(
         verticalArrangement = Arrangement.SpaceBetween,
     ) {
         TypeBadge(
-            mark = if (selected) "✓" else if (entry.isDirectory) "DIR" else entry.badge(),
+            mark = if (selected) {
+                "✓"
+            } else if (entry.isDirectory) {
+                "DIR"
+            } else {
+                entry.badge()
+            },
             size = FoldSizing.typeBadgeGrid,
             borderColor = if (selected) colors.accent else colors.onBackground.copy(alpha = 0.35f),
             fillColor = if (selected) colors.accent else Color.Transparent,
@@ -359,5 +385,5 @@ private fun sortLabel(sort: FsSort): String = stringResource(
         FsSort.DATE -> R.string.browse_sort_date
         FsSort.SIZE -> R.string.browse_sort_size
         FsSort.NAME -> R.string.browse_sort_name
-    }
+    },
 )

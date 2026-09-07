@@ -22,10 +22,18 @@ import kotlin.system.measureTimeMillis
 /** Where a search looks. */
 enum class SearchScope { ALL_STORAGE, THIS_FOLDER, VAULT }
 
-/** One result row. A name match, or a name match with a line from inside the file. */
+/**
+ * One result row, and one file.
+ *
+ * A file can match on its name, on its contents, or on both. Both is a single
+ * row carrying both signals -- never two rows for one file, which would make the
+ * match count read as "more results" when the user turned CONTENTS on rather
+ * than as "the same files, now with the lines that matched".
+ */
 data class SearchResult(
     val entry: FileIndexEntity,
     val contentMatch: ContentMatch? = null,
+    val matchedName: Boolean = false,
 )
 
 data class SearchUiState(
@@ -130,7 +138,9 @@ class SearchViewModel @Inject constructor(
             _state.value = _state.value.copy(searching = true)
 
             val preferences = settings.settings.first()
-            val results = ArrayList<SearchResult>()
+            // Keyed by path so the contents pass merges into the name pass rather
+            // than appending a duplicate. Insertion order is the display order.
+            val results = LinkedHashMap<String, SearchResult>()
             var elapsed: Long
 
             elapsed = measureTimeMillis {
@@ -143,12 +153,14 @@ class SearchViewModel @Inject constructor(
                     categoryCount = current.categories.size,
                     limit = NAME_RESULT_LIMIT,
                 )
-                results.addAll(byName.map { SearchResult(it) })
+                byName.forEach { entry ->
+                    results[entry.path] = SearchResult(entry, matchedName = true)
+                }
             }
 
             // Name results appear immediately; the contents pass streams in after.
             _state.value = _state.value.copy(
-                results = results.toList(),
+                results = results.values.toList(),
                 elapsedMillis = elapsed,
                 searching = current.searchContents,
             )
@@ -170,9 +182,13 @@ class SearchViewModel @Inject constructor(
 
             contentSearcher.search(current.query, candidates).collect { match ->
                 byPath[match.path.value]?.let { entry ->
-                    results.add(SearchResult(entry, match))
+                    // Already found by name: keep its place in the list and add
+                    // the line. Otherwise it is a contents-only hit and appends.
+                    val existing = results[entry.path]
+                    results[entry.path] = existing?.copy(contentMatch = match)
+                        ?: SearchResult(entry, contentMatch = match)
                     _state.value = _state.value.copy(
-                        results = results.toList(),
+                        results = results.values.toList(),
                         // The readout keeps climbing while contents stream, which
                         // is the honest thing for it to do.
                         elapsedMillis = System.currentTimeMillis() - startedAt + elapsed,

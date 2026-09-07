@@ -27,10 +27,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
 import com.jeelgajera.fold.core.design.component.DotGrid
 import com.jeelgajera.fold.core.design.component.FoldCallout
 import com.jeelgajera.fold.core.design.component.FoldTabStrip
@@ -54,9 +54,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class GlyphSettingsViewModel @Inject constructor(
-    private val settings: SettingsRepository,
-) : ViewModel() {
+class GlyphSettingsViewModel @Inject constructor(private val settings: SettingsRepository) : ViewModel() {
 
     val preferences: StateFlow<FoldSettings> = settings.settings
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), FoldSettings())
@@ -79,10 +77,7 @@ class GlyphSettingsViewModel @Inject constructor(
  * behaviour is inspectable during development.
  */
 @Composable
-fun GlyphSettingsScreen(
-    modifier: Modifier = Modifier,
-    viewModel: GlyphSettingsViewModel = hiltViewModel(),
-) {
+fun GlyphSettingsScreen(modifier: Modifier = Modifier, viewModel: GlyphSettingsViewModel = hiltViewModel()) {
     val preferences by viewModel.preferences.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val colors = FoldTheme.colors
@@ -133,7 +128,7 @@ fun GlyphSettingsScreen(
                             0 -> GlyphMode.STRIP
                             1 -> GlyphMode.MATRIX
                             else -> GlyphMode.OFF
-                        }
+                        },
                     )
                 },
                 height = 48.dp,
@@ -151,7 +146,14 @@ fun GlyphSettingsScreen(
 
             hardware == GlyphHardware.NONE && GlyphDetection.SDK_INTEGRATION_PENDING -> item {
                 FoldCallout(
-                    tag = stringResource(R.string.glyph_sdk_pending_tag),
+                    // Naming the phone and its zone count is something the user
+                    // can check against the back of their device; "not wired yet"
+                    // reads as unfinished work rather than a missing dependency.
+                    tag = stringResource(
+                        R.string.glyph_sdk_pending_tag,
+                        GlyphDetection.deviceDescription()
+                            ?: stringResource(R.string.glyph_unknown_device),
+                    ),
                     text = stringResource(R.string.glyph_sdk_pending),
                 )
             }

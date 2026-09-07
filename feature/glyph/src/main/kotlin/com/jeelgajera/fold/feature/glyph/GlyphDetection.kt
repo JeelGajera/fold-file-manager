@@ -5,6 +5,47 @@ import android.content.pm.PackageManager
 import android.os.Build
 
 /**
+ * A Nothing phone FOLD knows the glyph layout of.
+ *
+ * Identified by model code rather than by a system feature, because the feature
+ * flags are not reliable: a Phone (2a) reports `com.nothing.feature.*` entries
+ * and no `com.nothing.glyph` at all, so a feature-only check can never succeed
+ * on it. The model code is what actually distinguishes the hardware.
+ *
+ * [zones] is the number of independently addressable glyph channels. These come
+ * from the Glyph Developer Kit's published channel maps and are the numbers the
+ * sequence maths in [GlyphSequences] is written against; they are worth
+ * re-confirming against the SDK when it is finally on the classpath, since a
+ * wrong count means a sequence that lights the wrong strip rather than one that
+ * fails loudly.
+ */
+enum class GlyphDevice(val modelCode: String, val displayName: String, val hardware: GlyphHardware, val zones: Int) {
+    PHONE_1("A063", "Phone (1)", GlyphHardware.STRIP, zones = 5),
+    PHONE_2("A065", "Phone (2)", GlyphHardware.STRIP, zones = 11),
+    PHONE_2A("A142", "Phone (2a)", GlyphHardware.STRIP, zones = 3),
+    PHONE_2A_PLUS("A142P", "Phone (2a) Plus", GlyphHardware.STRIP, zones = 3),
+    PHONE_3A("A059", "Phone (3a)", GlyphHardware.STRIP, zones = 3),
+    PHONE_3A_PRO("A059P", "Phone (3a) Pro", GlyphHardware.STRIP, zones = 3),
+    PHONE_3("A024", "Phone (3)", GlyphHardware.MATRIX, zones = 0),
+    ;
+
+    companion object {
+        /**
+         * The device this build is running on, or null if it is not a Nothing
+         * phone with a glyph layout FOLD knows.
+         *
+         * Longest code first, so `A142P` is not swallowed by `A142`.
+         */
+        fun current(): GlyphDevice? {
+            val model = Build.MODEL.trim().uppercase()
+            return entries
+                .sortedByDescending { it.modelCode.length }
+                .firstOrNull { model == it.modelCode || model.startsWith(it.modelCode) }
+        }
+    }
+}
+
+/**
  * Runtime detection of glyph hardware.
  *
  * ### Why this is reflection and not a dependency
@@ -43,14 +84,21 @@ object GlyphDetection {
     fun detect(context: Context): GlyphHardware {
         if (!isNothingDevice()) return GlyphHardware.NONE
 
-        return when {
-            hasFeature(context, FEATURE_MATRIX) && isClassPresent(MATRIX_MANAGER) ->
-                GlyphHardware.MATRIX
-
-            hasFeature(context, FEATURE_GLYPH) && isClassPresent(GDK_MANAGER) ->
-                GlyphHardware.STRIP
-
+        // The model is the primary signal; the declared feature is accepted as a
+        // fallback for a Nothing phone released after this build. Either way the
+        // SDK must be loadable, or there is nothing to drive the hardware with.
+        val byModel = GlyphDevice.current()?.hardware
+        val byFeature = when {
+            hasFeature(context, FEATURE_MATRIX) -> GlyphHardware.MATRIX
+            hasFeature(context, FEATURE_GLYPH) -> GlyphHardware.STRIP
             else -> GlyphHardware.NONE
+        }
+        val hardware = byModel ?: byFeature
+
+        return when (hardware) {
+            GlyphHardware.MATRIX -> if (isClassPresent(MATRIX_MANAGER)) hardware else GlyphHardware.NONE
+            GlyphHardware.STRIP -> if (isClassPresent(GDK_MANAGER)) hardware else GlyphHardware.NONE
+            GlyphHardware.NONE -> GlyphHardware.NONE
         }
     }
 
@@ -63,16 +111,37 @@ object GlyphDetection {
      */
     fun potentialHardware(context: Context): GlyphHardware = when {
         !isNothingDevice() -> GlyphHardware.NONE
+
+        // A recognised model settles it without consulting the feature flags,
+        // which a Phone (2a) does not declare.
+        GlyphDevice.current() != null -> GlyphDevice.current()!!.hardware
+
         hasFeature(context, FEATURE_MATRIX) -> GlyphHardware.MATRIX
+
         hasFeature(context, FEATURE_GLYPH) -> GlyphHardware.STRIP
-        // A Nothing phone whose feature flags are unfamiliar. The strip is the
-        // safer assumption; the controller still fails closed if it cannot bind.
+
+        // A Nothing phone whose model and feature flags are both unfamiliar. The
+        // strip is the safer assumption; the controller still fails closed if it
+        // cannot bind.
         else -> GlyphHardware.STRIP
     }
 
-    private fun isNothingDevice(): Boolean =
-        Build.MANUFACTURER.equals("Nothing", ignoreCase = true) ||
-            Build.BRAND.equals("Nothing", ignoreCase = true)
+    /**
+     * How this phone should be described on the settings screen.
+     *
+     * "Phone (2a) - 3 glyph zones" is a statement the user can check against the
+     * back of their device. "Glyph hardware detected" is not.
+     */
+    fun deviceDescription(): String? = GlyphDevice.current()?.let { device ->
+        when (device.hardware) {
+            GlyphHardware.MATRIX -> "${device.displayName} · Glyph Matrix"
+            GlyphHardware.STRIP -> "${device.displayName} · ${device.zones} glyph zones"
+            GlyphHardware.NONE -> device.displayName
+        }
+    }
+
+    private fun isNothingDevice(): Boolean = Build.MANUFACTURER.equals("Nothing", ignoreCase = true) ||
+        Build.BRAND.equals("Nothing", ignoreCase = true)
 
     private fun hasFeature(context: Context, feature: String): Boolean = try {
         context.packageManager.hasSystemFeature(feature)

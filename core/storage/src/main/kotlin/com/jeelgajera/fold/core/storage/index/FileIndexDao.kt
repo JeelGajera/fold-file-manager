@@ -52,19 +52,70 @@ interface FileIndexDao {
         FROM file_index
         WHERE isDirectory = 0
         GROUP BY category
-        """
+        """,
     )
     fun observeCategoryTotals(): Flow<List<CategoryTotal>>
 
+    /**
+     * The home screen's Recent list.
+     *
+     * Noise is excluded unconditionally here. "What did I just work on" is never
+     * answered by a thumbnail an app rewrote a second ago, and a Recent list that
+     * says otherwise is the fastest way to make the whole screen worthless.
+     */
     @Query(
         """
         SELECT * FROM file_index
-        WHERE isDirectory = 0 AND (:includeHidden OR isHidden = 0)
+        WHERE isDirectory = 0
+          AND isNoise = 0
+          AND (:includeHidden OR isHidden = 0)
         ORDER BY lastModified DESC
         LIMIT :limit
-        """
+        """,
     )
     fun observeRecent(limit: Int, includeHidden: Boolean): Flow<List<FileIndexEntity>>
+
+    /**
+     * Every indexed file in one category, largest first.
+     *
+     * The home screen's category tiles are index-derived and span the whole
+     * device -- a document lives wherever it was saved, not in a "Documents"
+     * folder -- so opening a tile lists the files themselves rather than
+     * navigating to a directory that does not exist.
+     */
+    @Query(
+        """
+        SELECT * FROM file_index
+        WHERE isDirectory = 0
+          AND category = :category
+          AND (:includeHidden OR isHidden = 0)
+          AND (:includeNoise OR isNoise = 0)
+        ORDER BY sizeBytes DESC
+        LIMIT :limit
+        """,
+    )
+    fun observeByCategory(
+        category: String,
+        includeHidden: Boolean,
+        includeNoise: Boolean,
+        limit: Int,
+    ): Flow<List<FileIndexEntity>>
+
+    /**
+     * Everything in the category, noise included.
+     *
+     * The listing shows this alongside what it is displaying, so the curation is
+     * stated as a number the user can act on rather than applied silently.
+     */
+    @Query(
+        """
+        SELECT COUNT(*) FROM file_index
+        WHERE isDirectory = 0
+          AND category = :category
+          AND (:includeHidden OR isHidden = 0)
+        """,
+    )
+    fun observeCategoryCount(category: String, includeHidden: Boolean): Flow<Int>
 
     /**
      * Name search.
@@ -86,7 +137,7 @@ interface FileIndexDao {
                ELSE 2 END,
           lastModified DESC
         LIMIT :limit
-        """
+        """,
     )
     suspend fun searchByName(
         query: String,
@@ -109,7 +160,7 @@ interface FileIndexDao {
           AND mimeType IN (:textMimeTypes)
         ORDER BY lastModified DESC
         LIMIT :limit
-        """
+        """,
     )
     suspend fun textCandidates(
         scopePrefix: String,
@@ -134,8 +185,4 @@ interface FileIndexDao {
 }
 
 /** One row of the home screen's category grid. */
-data class CategoryTotal(
-    val category: String,
-    val count: Int,
-    val bytes: Long,
-)
+data class CategoryTotal(val category: String, val count: Int, val bytes: Long)

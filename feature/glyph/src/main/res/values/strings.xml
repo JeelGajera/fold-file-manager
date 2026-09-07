@@ -20,8 +20,9 @@
       Central and need developer registration plus an API key in the manifest;
       until that is done the controllers are wired but inert.
     -->
-    <string name="glyph_sdk_pending_tag">NOT WIRED YET</string>
-    <string name="glyph_sdk_pending">This phone has glyph hardware, but FOLD does not ship Nothing\'s Glyph SDK yet — it needs developer registration and an API key. The sequences below are built and previewable; they will not light the back of the phone until that is done.</string>
+    <string name="glyph_unknown_device">NOTHING PHONE</string>
+    <string name="glyph_sdk_pending_tag">%1$s</string>
+    <string name="glyph_sdk_pending">FOLD can see your hardware but cannot drive it. Nothing does not publish the Glyph Developer Kit to any public repository — it is issued to registered developers as an AAR plus an API key, and neither is in this build. Everything below is real: the sequences are written against this phone\'s zone layout and preview exactly what they would play. They cannot reach the LEDs until that kit is added.</string>
 
     <string name="glyph_event_progress">Transfer in progress</string>
     <string name="glyph_event_progress_spec">ZONE 1-5 · 0-100% BRIGHTNESS · LOOP</string>

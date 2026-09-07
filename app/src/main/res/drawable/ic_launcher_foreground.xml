@@ -1,17 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-    The mark: a folded corner drawn as two planes. Flat, 0dp radius, one accent
-    edge - the same grammar as the rest of the app.
+    The mark: a sheet with its corner folded back, plus the three-dot counter
+    that appears on every category tile in the app. Flat fills, 0dp radius, one
+    accent plane - the same grammar as the rest of FOLD.
+
+    Geometry is kept inside the adaptive icon's circular safe zone (a 66dp circle
+    centred in the 108dp canvas), because a launcher applying a round mask must
+    not clip the fold - the one detail that makes the mark legible at 48px.
 -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
+
+    <!-- The sheet, with the top-right corner taken off by the fold. -->
     <path
         android:fillColor="#F3F2F2"
-        android:pathData="M30,30h30l18,18v30h-48z" />
+        android:pathData="M31,27 H61 L79,45 V81 H31 Z" />
+
+    <!-- The folded flap. The only accent surface in the mark. -->
     <path
         android:fillColor="#EC3013"
-        android:pathData="M60,30l18,18h-18z" />
+        android:pathData="M61,27 L79,45 H61 Z" />
+
+    <!-- The crease, so the flap reads as folded rather than as a cut corner. -->
+    <path
+        android:fillColor="#0C0B0B"
+        android:fillAlpha="0.22"
+        android:pathData="M61,27 L62.4,28.4 V45 H61 Z" />
+
+    <!-- DotCount, the app's own three-square meter, sitting on the sheet. -->
+    <path
+        android:fillColor="#0C0B0B"
+        android:pathData="M39,69 h6 v6 h-6 z M49,69 h6 v6 h-6 z" />
+    <path
+        android:fillColor="#0C0B0B"
+        android:fillAlpha="0.28"
+        android:pathData="M59,69 h6 v6 h-6 z" />
 </vector>

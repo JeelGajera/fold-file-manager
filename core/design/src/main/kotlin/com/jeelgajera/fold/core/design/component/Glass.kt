@@ -6,8 +6,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Shape
 import com.jeelgajera.fold.core.design.theme.FoldRules
 import com.jeelgajera.fold.core.design.theme.FoldTheme
 import com.jeelgajera.fold.core.design.theme.LocalFoldBlurAvailable
@@ -30,7 +30,7 @@ import com.jeelgajera.fold.core.design.theme.LocalFoldBlurAvailable
 @Composable
 fun Modifier.foldGlass(
     fill: Color = FoldTheme.colors.surfaceGlass,
-    opaqueFallback: Color = Color(0xFF100F0F),
+    opaqueFallback: Color = FoldTheme.colors.surfaceRaised,
     borderColor: Color = FoldTheme.colors.onBackground.copy(alpha = 0.14f),
     shape: Shape = RectangleShape,
 ): Modifier {
@@ -44,7 +44,7 @@ fun Modifier.foldGlass(
 @Composable
 fun Modifier.foldDockGlass(): Modifier = foldGlass(
     fill = FoldTheme.colors.surfaceGlass,
-    opaqueFallback = Color(0xFF100F0F),
+    opaqueFallback = FoldTheme.colors.surfaceRaised,
     borderColor = FoldTheme.colors.onBackground.copy(alpha = 0.14f),
     shape = RoundedCornerShape(percent = 50),
 )

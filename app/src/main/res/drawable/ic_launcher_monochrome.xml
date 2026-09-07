@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    The themed-icon layer (Android 13+).
+    
+    The system tints this to a single colour, so the fold cannot be carried by
+    the accent plane the way it is in the full-colour mark. It is cut as negative
+    space instead, via an evenOdd hole, which survives any tint the system picks.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#000000"
+        android:fillType="evenOdd"
+        android:pathData="M31,27 H61 L79,45 V81 H31 Z M63,31 L75,43 H63 Z M39,69 h6 v6 h-6 z M49,69 h6 v6 h-6 z" />
+</vector>

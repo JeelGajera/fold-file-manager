@@ -1,0 +1,168 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 3,
+    "identityHash": "32ab1bf04aff3e41ca5a923ce27f47a1",
+    "entities": [
+      {
+        "tableName": "file_index",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`path` TEXT NOT NULL, `parentPath` TEXT NOT NULL, `name` TEXT NOT NULL, `nameLower` TEXT NOT NULL, `extension` TEXT NOT NULL, `mimeType` TEXT NOT NULL, `category` TEXT NOT NULL, `sizeBytes` INTEGER NOT NULL, `lastModified` INTEGER NOT NULL, `isDirectory` INTEGER NOT NULL, `isHidden` INTEGER NOT NULL, `isNoise` INTEGER NOT NULL, `indexedAt` INTEGER NOT NULL, PRIMARY KEY(`path`))",
+        "fields": [
+          {
+            "fieldPath": "path",
+            "columnName": "path",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "parentPath",
+            "columnName": "parentPath",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "name",
+            "columnName": "name",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "nameLower",
+            "columnName": "nameLower",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "extension",
+            "columnName": "extension",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "mimeType",
+            "columnName": "mimeType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "category",
+            "columnName": "category",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "sizeBytes",
+            "columnName": "sizeBytes",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "lastModified",
+            "columnName": "lastModified",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isDirectory",
+            "columnName": "isDirectory",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isHidden",
+            "columnName": "isHidden",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isNoise",
+            "columnName": "isNoise",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "indexedAt",
+            "columnName": "indexedAt",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "path"
+          ]
+        },
+        "indices": [
+          {
+            "name": "index_file_index_parentPath",
+            "unique": false,
+            "columnNames": [
+              "parentPath"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_parentPath` ON `${TABLE_NAME}` (`parentPath`)"
+          },
+          {
+            "name": "index_file_index_nameLower",
+            "unique": false,
+            "columnNames": [
+              "nameLower"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_nameLower` ON `${TABLE_NAME}` (`nameLower`)"
+          },
+          {
+            "name": "index_file_index_extension",
+            "unique": false,
+            "columnNames": [
+              "extension"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_extension` ON `${TABLE_NAME}` (`extension`)"
+          },
+          {
+            "name": "index_file_index_category",
+            "unique": false,
+            "columnNames": [
+              "category"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_category` ON `${TABLE_NAME}` (`category`)"
+          },
+          {
+            "name": "index_file_index_lastModified",
+            "unique": false,
+            "columnNames": [
+              "lastModified"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_lastModified` ON `${TABLE_NAME}` (`lastModified`)"
+          },
+          {
+            "name": "index_file_index_isNoise",
+            "unique": false,
+            "columnNames": [
+              "isNoise"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_isNoise` ON `${TABLE_NAME}` (`isNoise`)"
+          },
+          {
+            "name": "index_file_index_sizeBytes",
+            "unique": false,
+            "columnNames": [
+              "sizeBytes"
+            ],
+            "orders": [],
+            "createSql": "CREATE INDEX IF NOT EXISTS `index_file_index_sizeBytes` ON `${TABLE_NAME}` (`sizeBytes`)"
+          }
+        ]
+      }
+    ],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '32ab1bf04aff3e41ca5a923ce27f47a1')"
+    ]
+  }
+}

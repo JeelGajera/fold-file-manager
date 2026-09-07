@@ -95,8 +95,11 @@ fun FoldDrawer(
                 .fillMaxHeight()
                 .slideInFromEnd(progress)
                 .foldGlass(
-                    fill = Color(0xFF0E0D0D).copy(alpha = 0.82f),
-                    opaqueFallback = Color(0xFF0E0D0D),
+                    // Follows the theme. A high alpha rather than the dock's,
+                    // because the drawer carries body text over a dimmed page and
+                    // has to stay legible rather than merely suggest depth.
+                    fill = FoldTheme.colors.surfaceRaised.copy(alpha = 0.94f),
+                    opaqueFallback = FoldTheme.colors.surfaceRaised,
                     borderColor = colors.onBackground.copy(alpha = 0.14f),
                 ),
         ) {
@@ -206,7 +209,7 @@ fun FoldSegmentedControl(
                             Modifier.endRule(colors.onBackground.copy(alpha = 0.14f))
                         } else {
                             Modifier
-                        }
+                        },
                     ),
                 contentAlignment = Alignment.Center,
             ) {
@@ -220,4 +223,3 @@ fun FoldSegmentedControl(
         }
     }
 }
-
