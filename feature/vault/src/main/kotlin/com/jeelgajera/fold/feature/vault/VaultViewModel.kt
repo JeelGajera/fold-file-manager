@@ -60,12 +60,7 @@ class VaultViewModel @Inject constructor(
      * The cipher goes through the prompt and comes back authenticated -- see
      * [BiometricGate]. Nothing here trusts a success callback on its own.
      */
-    fun unlock(
-        activity: FragmentActivity,
-        title: String,
-        subtitle: String,
-        negative: String,
-    ) {
+    fun unlock(activity: FragmentActivity, title: String, subtitle: String, negative: String) {
         viewModelScope.launch {
             val minutes = settings.settings.first().vaultAutoLockMinutes
             try {

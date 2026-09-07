@@ -74,7 +74,10 @@ class VaultRepository(
     private val provider: FileSystemProvider,
     private val io: CoroutineDispatcher,
 ) {
-    private val json = Json { ignoreUnknownKeys = true; encodeDefaults = true }
+    private val json = Json {
+        ignoreUnknownKeys = true
+        encodeDefaults = true
+    }
     private val random = SecureRandom()
 
     private val blobDir: File get() = VaultLocations.blobDir(context)
@@ -155,7 +158,7 @@ class VaultRepository(
             if (!verify(blob)) {
                 blob.delete()
                 return@withContext Result.failure(
-                    VaultException.Tampered("The encrypted copy did not read back correctly")
+                    VaultException.Tampered("The encrypted copy did not read back correctly"),
                 )
             }
 
@@ -249,10 +252,7 @@ class VaultRepository(
      * opens -- each blob names the key that wrapped it. The old key is destroyed
      * only once nothing references it any more.
      */
-    suspend fun rotateKey(
-        newAlias: String,
-        authenticatedWrapCipher: Cipher,
-    ): Result<Int> = withContext(io) {
+    suspend fun rotateKey(newAlias: String, authenticatedWrapCipher: Cipher): Result<Int> = withContext(io) {
         val previousAlias = currentAlias
         var rotated = 0
         try {
@@ -342,15 +342,9 @@ class VaultRepository(
 
 /** Locked or unlocked, and what the UI needs to draw either. */
 sealed interface VaultState {
-    data class Locked(
-        val failedAttempts: Int = 0,
-        val lastError: VaultException? = null,
-    ) : VaultState
+    data class Locked(val failedAttempts: Int = 0, val lastError: VaultException? = null) : VaultState
 
-    data class Unlocked(
-        val entries: List<VaultEntry>,
-        val unlockedAtMillis: Long,
-    ) : VaultState {
+    data class Unlocked(val entries: List<VaultEntry>, val unlockedAtMillis: Long) : VaultState {
         val totalBytes: Long get() = entries.sumOf { it.plaintextSize }
 
         /** Milliseconds left before auto-lock, for the countdown in the header. */

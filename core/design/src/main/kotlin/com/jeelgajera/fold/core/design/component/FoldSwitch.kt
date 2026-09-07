@@ -28,11 +28,7 @@ import com.jeelgajera.fold.core.design.theme.foldTween
  * `Role.Switch` semantics, and the switch is decorative.
  */
 @Composable
-fun FoldSwitch(
-    checked: Boolean,
-    modifier: Modifier = Modifier,
-    small: Boolean = false,
-) {
+fun FoldSwitch(checked: Boolean, modifier: Modifier = Modifier, small: Boolean = false) {
     val colors = FoldTheme.colors
     val trackWidth: Dp = if (small) FoldSizing.switchTrackWidthSmall else FoldSizing.switchTrackWidth
     val trackHeight: Dp = if (small) FoldSizing.switchTrackHeightSmall else FoldSizing.switchTrackHeight

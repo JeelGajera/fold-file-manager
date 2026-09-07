@@ -94,7 +94,7 @@ class ContentSearcher(
                                 // trimmed string so highlighting lands correctly.
                                 matchStart = line.trim().lowercase().indexOf(needle).coerceAtLeast(0),
                                 matchLength = query.length,
-                            )
+                            ),
                         )
                         emitted++
                         inFile++

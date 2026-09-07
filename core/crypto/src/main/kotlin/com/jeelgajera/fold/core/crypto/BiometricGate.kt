@@ -80,7 +80,7 @@ class BiometricGate {
                         // unlocked. Refusing here is the whole point of passing
                         // the cipher through the prompt.
                         continuation.resumeWithException(
-                            VaultException.KeyUnavailable("Authentication returned no usable key")
+                            VaultException.KeyUnavailable("Authentication returned no usable key"),
                         )
                         return
                     }
@@ -89,7 +89,7 @@ class BiometricGate {
                             cipher = authenticated,
                             usedBiometric = result.authenticationType ==
                                 BiometricPrompt.AUTHENTICATION_RESULT_TYPE_BIOMETRIC,
-                        )
+                        ),
                     )
                 }
 
@@ -104,7 +104,7 @@ class BiometricGate {
                                 VaultException.KeyUnavailable(message.toString())
 
                             else -> VaultException.NotAuthenticated()
-                        }
+                        },
                     )
                 }
 
@@ -141,33 +141,30 @@ class BiometricGate {
      * throw `UserNotAuthenticatedException` if the platform disagreed, which is
      * the check that matters.
      */
-    suspend fun authenticateWithCredential(
-        activity: FragmentActivity,
-        title: String,
-        subtitle: String,
-    ): Boolean = suspendCancellableCoroutine { continuation ->
-        val executor = androidx.core.content.ContextCompat.getMainExecutor(activity)
-        val prompt = BiometricPrompt(
-            activity,
-            executor,
-            object : BiometricPrompt.AuthenticationCallback() {
-                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
-                    if (continuation.isActive) continuation.resume(true)
-                }
+    suspend fun authenticateWithCredential(activity: FragmentActivity, title: String, subtitle: String): Boolean =
+        suspendCancellableCoroutine { continuation ->
+            val executor = androidx.core.content.ContextCompat.getMainExecutor(activity)
+            val prompt = BiometricPrompt(
+                activity,
+                executor,
+                object : BiometricPrompt.AuthenticationCallback() {
+                    override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                        if (continuation.isActive) continuation.resume(true)
+                    }
 
-                override fun onAuthenticationError(code: Int, message: CharSequence) {
-                    if (continuation.isActive) continuation.resume(false)
-                }
-            },
-        )
+                    override fun onAuthenticationError(code: Int, message: CharSequence) {
+                        if (continuation.isActive) continuation.resume(false)
+                    }
+                },
+            )
 
-        val info = BiometricPrompt.PromptInfo.Builder()
-            .setTitle(title)
-            .setSubtitle(subtitle)
-            .setAllowedAuthenticators(BiometricManager.Authenticators.DEVICE_CREDENTIAL)
-            .build()
+            val info = BiometricPrompt.PromptInfo.Builder()
+                .setTitle(title)
+                .setSubtitle(subtitle)
+                .setAllowedAuthenticators(BiometricManager.Authenticators.DEVICE_CREDENTIAL)
+                .build()
 
-        prompt.authenticate(info)
-        continuation.invokeOnCancellation { prompt.cancelAuthentication() }
-    }
+            prompt.authenticate(info)
+            continuation.invokeOnCancellation { prompt.cancelAuthentication() }
+        }
 }

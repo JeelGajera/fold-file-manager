@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -30,7 +31,7 @@ import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.FragmentActivity
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.crypto.AuthAvailability
 import com.jeelgajera.fold.core.crypto.VaultState
@@ -48,7 +49,6 @@ import com.jeelgajera.fold.core.design.theme.FoldSpacing
 import com.jeelgajera.fold.core.design.theme.FoldTheme
 import com.jeelgajera.fold.core.design.theme.LocalFoldColors
 import com.jeelgajera.fold.core.storage.util.Formatting
-import androidx.compose.runtime.CompositionLocalProvider
 
 /**
  * The vault.
@@ -143,7 +143,7 @@ private fun LockedVault(
                             Modifier
                                 .size(10.dp)
                                 .background(
-                                    if (on) colors.accent else colors.onBackground.copy(alpha = 0.22f)
+                                    if (on) colors.accent else colors.onBackground.copy(alpha = 0.22f),
                                 ),
                         )
                     }
@@ -375,7 +375,6 @@ private fun UnlockedVault(
         }
     }
 }
-
 
 /** The lit cells of the 5x5 lock mark, as indices into a row-major grid. */
 private val LOCK_MARK = setOf(2, 6, 7, 8, 11, 13, 16, 17, 18, 21, 22, 23)

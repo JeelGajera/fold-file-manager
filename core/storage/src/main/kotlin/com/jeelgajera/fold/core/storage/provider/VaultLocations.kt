@@ -19,8 +19,7 @@ object VaultLocations {
      * App-private storage, so no other app can read the blobs even with All Files
      * Access of its own, and nothing here is visible to the media scanner.
      */
-    fun blobDir(context: Context): File =
-        File(context.filesDir, "vault").apply { if (!exists()) mkdirs() }
+    fun blobDir(context: Context): File = File(context.filesDir, "vault").apply { if (!exists()) mkdirs() }
 
     /**
      * A `.nomedia` marker inside the blob directory.

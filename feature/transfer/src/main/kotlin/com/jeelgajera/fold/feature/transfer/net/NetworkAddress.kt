@@ -8,12 +8,7 @@ import android.net.wifi.WifiManager
 import java.net.Inet4Address
 
 /** Which transport the phone is on, and what address the server would bind to. */
-data class NetworkState(
-    val ipv4: String?,
-    val ssid: String?,
-    val isWifi: Boolean,
-    val isCellularOnly: Boolean,
-) {
+data class NetworkState(val ipv4: String?, val ssid: String?, val isWifi: Boolean, val isCellularOnly: Boolean) {
     val canServe: Boolean get() = ipv4 != null
 }
 

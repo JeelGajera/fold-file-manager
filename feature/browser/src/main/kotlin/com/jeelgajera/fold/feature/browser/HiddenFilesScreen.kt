@@ -12,7 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.FoldCallout
 import com.jeelgajera.fold.core.design.component.FoldFileRow
@@ -33,10 +33,7 @@ import com.jeelgajera.fold.core.storage.util.Formatting
  * and the word "private" appears nowhere on it.
  */
 @Composable
-fun HiddenFilesScreen(
-    modifier: Modifier = Modifier,
-    viewModel: BrowserViewModel = hiltViewModel(),
-) {
+fun HiddenFilesScreen(modifier: Modifier = Modifier, viewModel: BrowserViewModel = hiltViewModel()) {
     val state by viewModel.browse.collectAsStateWithLifecycle()
     val colors = FoldTheme.colors
 

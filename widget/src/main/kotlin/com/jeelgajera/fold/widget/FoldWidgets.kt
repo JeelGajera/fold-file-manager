@@ -7,12 +7,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.glance.GlanceId
 import androidx.glance.GlanceModifier
+import androidx.glance.action.ActionParameters
 import androidx.glance.action.clickable
 import androidx.glance.appwidget.GlanceAppWidget
 import androidx.glance.appwidget.GlanceAppWidgetReceiver
-import androidx.glance.appwidget.provideContent
-import androidx.glance.appwidget.action.actionRunCallback
 import androidx.glance.appwidget.action.ActionCallback
+import androidx.glance.appwidget.action.actionRunCallback
+import androidx.glance.appwidget.provideContent
 import androidx.glance.background
 import androidx.glance.layout.Alignment
 import androidx.glance.layout.Column
@@ -31,7 +32,6 @@ import androidx.glance.text.TextStyle
 import androidx.glance.unit.ColorProvider
 import com.jeelgajera.fold.core.storage.stats.VolumeStats
 import com.jeelgajera.fold.core.storage.util.Formatting
-import androidx.glance.action.ActionParameters
 
 /**
  * FOLD's two home-screen widgets.
@@ -137,7 +137,7 @@ class StorageWidget : GlanceAppWidget() {
             GlanceModifier
                 .defaultWeight()
                 .fillMaxHeight()
-                .background(if (filled) WidgetColors.accent else WidgetColors.track)
+                .background(if (filled) WidgetColors.accent else WidgetColors.track),
         )
         if (!isLast) Spacer(GlanceModifier.width(2.dp))
     }
@@ -204,11 +204,7 @@ class ServerWidget : GlanceAppWidget() {
  * because the fastest way to stop sharing should be the same tap that started it.
  */
 class ToggleServerAction : ActionCallback {
-    override suspend fun onAction(
-        context: Context,
-        glanceId: GlanceId,
-        parameters: ActionParameters,
-    ) {
+    override suspend fun onAction(context: Context, glanceId: GlanceId, parameters: ActionParameters) {
         ServerWidgetState.toggle(context)
     }
 }

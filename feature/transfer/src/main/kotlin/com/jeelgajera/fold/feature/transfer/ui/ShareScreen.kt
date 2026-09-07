@@ -4,13 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
@@ -23,7 +23,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jeelgajera.fold.core.design.component.DotProgress
 import com.jeelgajera.fold.core.design.component.FoldAccentButton
@@ -51,11 +51,7 @@ import com.jeelgajera.fold.feature.transfer.server.ServerSession
  * Doto, and the PIN.
  */
 @Composable
-fun ShareScreen(
-    onQuickShare: () -> Unit,
-    modifier: Modifier = Modifier,
-    viewModel: ShareViewModel = hiltViewModel(),
-) {
+fun ShareScreen(onQuickShare: () -> Unit, modifier: Modifier = Modifier, viewModel: ShareViewModel = hiltViewModel()) {
     val state by viewModel.server.collectAsStateWithLifecycle()
     val tab by viewModel.tab.collectAsStateWithLifecycle()
     val peers by viewModel.peers.collectAsStateWithLifecycle()
@@ -133,7 +129,7 @@ private fun SendTab(
                                 Modifier
                                     .size(6.dp)
                                     .background(
-                                        ink.copy(alpha = if (running && index % 2 == 0) 1f else 0.3f)
+                                        ink.copy(alpha = if (running && index % 2 == 0) 1f else 0.3f),
                                     ),
                             )
                         }
@@ -173,7 +169,9 @@ private fun SendTab(
                     text = when {
                         running && state.network?.ssid != null ->
                             stringResource(R.string.transfer_help_running, state.network!!.ssid!!)
+
                         running -> stringResource(R.string.transfer_help_running_unknown_network)
+
                         else -> stringResource(R.string.transfer_help_off)
                     },
                     style = FoldTheme.typography.bodyS,

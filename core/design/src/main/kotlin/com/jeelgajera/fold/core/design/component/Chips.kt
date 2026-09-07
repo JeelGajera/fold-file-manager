@@ -31,12 +31,7 @@ import com.jeelgajera.fold.core.design.theme.foldTween
  * these are radio buttons wearing a chip.
  */
 @Composable
-fun FoldScopeChip(
-    label: String,
-    selected: Boolean,
-    onSelect: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun FoldScopeChip(label: String, selected: Boolean, onSelect: () -> Unit, modifier: Modifier = Modifier) {
     val colors = FoldTheme.colors
     Box(
         modifier
@@ -120,11 +115,7 @@ fun FoldFilterChip(
 
 /** The sort control: one chip that cycles DATE -> SIZE -> NAME. */
 @Composable
-fun FoldSortChip(
-    label: String,
-    onCycle: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
+fun FoldSortChip(label: String, onCycle: () -> Unit, modifier: Modifier = Modifier) {
     val colors = FoldTheme.colors
     Row(
         modifier

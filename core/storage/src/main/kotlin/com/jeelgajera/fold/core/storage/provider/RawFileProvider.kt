@@ -56,29 +56,28 @@ class RawFileProvider(
         roots = roots,
     )
 
-    override suspend fun list(path: FsPath, options: ListOptions): Result<List<FsEntry>> =
-        withContext(io) {
-            val dir = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
-            if (!dir.exists()) return@withContext Result.failure(FsError.NotFound(path))
-            if (!dir.isDirectory) return@withContext Result.failure(FsError.NotADirectory(path))
+    override suspend fun list(path: FsPath, options: ListOptions): Result<List<FsEntry>> = withContext(io) {
+        val dir = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
+        if (!dir.exists()) return@withContext Result.failure(FsError.NotFound(path))
+        if (!dir.isDirectory) return@withContext Result.failure(FsError.NotADirectory(path))
 
-            // listFiles() returns null both for "not a directory" and for
-            // "cannot read", and the two need different errors.
-            val children = dir.listFiles()
-                ?: return@withContext Result.failure(FsError.PermissionDenied(path))
+        // listFiles() returns null both for "not a directory" and for
+        // "cannot read", and the two need different errors.
+        val children = dir.listFiles()
+            ?: return@withContext Result.failure(FsError.PermissionDenied(path))
 
-            val entries = children
-                .asSequence()
-                .filter { options.includeHidden || !it.name.startsWith('.') }
-                // A child that escapes the allowlist -- via a symlink out of the
-                // tree, say -- is dropped from the listing rather than shown and
-                // then refused on open.
-                .filter { !guard.isDenied(it) }
-                .map { it.toEntry() }
-                .toList()
+        val entries = children
+            .asSequence()
+            .filter { options.includeHidden || !it.name.startsWith('.') }
+            // A child that escapes the allowlist -- via a symlink out of the
+            // tree, say -- is dropped from the listing rather than shown and
+            // then refused on open.
+            .filter { !guard.isDenied(it) }
+            .map { it.toEntry() }
+            .toList()
 
-            Result.success(entries.sortedWith(comparatorFor(options)))
-        }
+        Result.success(entries.sortedWith(comparatorFor(options)))
+    }
 
     override suspend fun stat(path: FsPath): Result<FsEntry> = withContext(io) {
         val file = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
@@ -97,20 +96,19 @@ class RawFileProvider(
         }
     }
 
-    override suspend fun write(path: FsPath, append: Boolean): Result<OutputStream> =
-        withContext(io) {
-            val file = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
-            file.parentFile?.let { parent ->
-                if (!parent.exists() && !parent.mkdirs()) {
-                    return@withContext Result.failure(FsError.Io("Cannot create ${parent.path}"))
-                }
-            }
-            try {
-                Result.success(FileOutputStream(file, append) as OutputStream)
-            } catch (e: Exception) {
-                Result.failure(e.asFsError(path))
+    override suspend fun write(path: FsPath, append: Boolean): Result<OutputStream> = withContext(io) {
+        val file = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
+        file.parentFile?.let { parent ->
+            if (!parent.exists() && !parent.mkdirs()) {
+                return@withContext Result.failure(FsError.Io("Cannot create ${parent.path}"))
             }
         }
+        try {
+            Result.success(FileOutputStream(file, append) as OutputStream)
+        } catch (e: Exception) {
+            Result.failure(e.asFsError(path))
+        }
+    }
 
     override suspend fun createDirectory(path: FsPath): Result<FsEntry> = withContext(io) {
         val dir = guard.resolve(path).getOrElse { return@withContext Result.failure(it) }
@@ -263,10 +261,14 @@ class RawFileProvider(
 
     private fun Throwable.asFsError(path: FsPath): FsError = when {
         this is FsError -> this
+
         this is SecurityException -> FsError.PermissionDenied(path)
+
         message?.contains("No space left", ignoreCase = true) == true -> FsError.OutOfSpace(path)
+
         message?.contains("Permission denied", ignoreCase = true) == true ->
             FsError.PermissionDenied(path)
+
         else -> FsError.Io(message ?: "I/O failure on ${path.value}", this)
     }
 
@@ -314,7 +316,7 @@ class RawFileProvider(
                     path = FsPath.raw(shared.path),
                     label = "Internal storage",
                     isPrimary = true,
-                )
+                ),
             )
             add(FsRoot(path = FsPath.raw("/"), label = "Device", isPrimary = false))
         }

@@ -59,11 +59,7 @@ class ServerAuth(
      *
      * @return the token, or null when the PIN is wrong or the caller is locked out.
      */
-    fun authenticate(
-        candidate: String,
-        remoteAddress: String,
-        userAgent: String,
-    ): AuthOutcome {
+    fun authenticate(candidate: String, remoteAddress: String, userAgent: String): AuthOutcome {
         val now = clock()
         val record = failures[remoteAddress]
         if (record != null && now < record.lockedUntilMillis) {
@@ -126,8 +122,7 @@ class ServerAuth(
         return clock() - newest > idleMinutes * 60_000L
     }
 
-    private fun generatePin(): String =
-        (1..PIN_DIGITS).joinToString("") { random.nextInt(10).toString() }
+    private fun generatePin(): String = (1..PIN_DIGITS).joinToString("") { random.nextInt(10).toString() }
 
     private fun newToken(): String {
         val bytes = ByteArray(32).also(random::nextBytes)
@@ -183,9 +178,13 @@ class ServerAuth(
             val browser = when {
                 // Order matters: Chrome and Edge both claim Safari, Edge claims Chrome.
                 userAgent.contains("Edg/") -> "Edge"
+
                 userAgent.contains("Firefox") -> "Firefox"
+
                 userAgent.contains("Chrome") -> "Chrome"
+
                 userAgent.contains("Safari") -> "Safari"
+
                 else -> "Browser"
             }
             return "$platform · $browser"

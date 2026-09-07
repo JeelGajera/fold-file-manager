@@ -43,7 +43,9 @@ object Formatting {
     fun bytesSplit(value: Long): Pair<String, String> {
         val formatted = bytes(value)
         val space = formatted.lastIndexOf(' ')
-        return if (space < 0) formatted to "" else {
+        return if (space < 0) {
+            formatted to ""
+        } else {
             formatted.substring(0, space) to formatted.substring(space + 1)
         }
     }
@@ -97,6 +99,5 @@ object Formatting {
         return if (value < 0) "-$grouped" else grouped
     }
 
-    private fun yearOf(millis: Long): String =
-        SimpleDateFormat("yyyy", Locale.US).format(Date(millis))
+    private fun yearOf(millis: Long): String = SimpleDateFormat("yyyy", Locale.US).format(Date(millis))
 }

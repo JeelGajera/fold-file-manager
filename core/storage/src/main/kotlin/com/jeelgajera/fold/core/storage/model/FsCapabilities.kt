@@ -25,9 +25,4 @@ data class FsCapabilities(
 }
 
 /** A browsable top-level location. */
-data class FsRoot(
-    val path: FsPath,
-    val label: String,
-    val isPrimary: Boolean,
-    val isRemovable: Boolean = false,
-)
+data class FsRoot(val path: FsPath, val label: String, val isPrimary: Boolean, val isRemovable: Boolean = false)

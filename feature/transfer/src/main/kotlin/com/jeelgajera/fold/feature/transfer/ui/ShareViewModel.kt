@@ -18,9 +18,7 @@ import javax.inject.Inject
 enum class ShareTab { SEND, RECEIVE, QUICK }
 
 @HiltViewModel
-class ShareViewModel @Inject constructor(
-    private val repository: TransferRepository,
-) : ViewModel() {
+class ShareViewModel @Inject constructor(private val repository: TransferRepository) : ViewModel() {
 
     val server: StateFlow<TransferState> = repository.state
 

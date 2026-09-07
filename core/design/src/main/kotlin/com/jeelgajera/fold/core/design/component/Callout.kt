@@ -23,11 +23,7 @@ import com.jeelgajera.fold.core.design.theme.FoldTheme
  * statement of fact rather than an error.
  */
 @Composable
-fun FoldCallout(
-    tag: String,
-    text: String,
-    modifier: Modifier = Modifier,
-) {
+fun FoldCallout(tag: String, text: String, modifier: Modifier = Modifier) {
     val colors = FoldTheme.colors
     Row(
         modifier

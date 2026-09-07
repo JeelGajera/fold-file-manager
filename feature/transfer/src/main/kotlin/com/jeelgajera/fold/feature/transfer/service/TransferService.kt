@@ -143,18 +143,16 @@ class TransferService : Service() {
         notificationManager().createNotificationChannel(channel)
     }
 
-    private fun notificationManager(): NotificationManager =
-        getSystemService(NotificationManager::class.java)
+    private fun notificationManager(): NotificationManager = getSystemService(NotificationManager::class.java)
 
-    private fun foregroundType(): Int =
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-            // dataSync is the correct declaration for a user-initiated file
-            // transfer. Declaring it accurately is also what the Play Console
-            // justification has to match.
-            ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
-        } else {
-            0
-        }
+    private fun foregroundType(): Int = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+        // dataSync is the correct declaration for a user-initiated file
+        // transfer. Declaring it accurately is also what the Play Console
+        // justification has to match.
+        ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC
+    } else {
+        0
+    }
 
     // --- wake lock --------------------------------------------------------
 
@@ -190,13 +188,13 @@ class TransferService : Service() {
 
         fun start(context: Context) {
             context.startForegroundService(
-                Intent(context, TransferService::class.java).setAction(ACTION_START)
+                Intent(context, TransferService::class.java).setAction(ACTION_START),
             )
         }
 
         fun stop(context: Context) {
             context.startService(
-                Intent(context, TransferService::class.java).setAction(ACTION_STOP)
+                Intent(context, TransferService::class.java).setAction(ACTION_STOP),
             )
         }
     }

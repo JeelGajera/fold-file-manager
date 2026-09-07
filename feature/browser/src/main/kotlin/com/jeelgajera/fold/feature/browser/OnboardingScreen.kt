@@ -68,8 +68,11 @@ fun OnboardingScreen(
                         .weight(1f)
                         .height(3.dp)
                         .background(
-                            if (index <= step) colors.accent
-                            else colors.onBackground.copy(alpha = 0.18f)
+                            if (index <= step) {
+                                colors.accent
+                            } else {
+                                colors.onBackground.copy(alpha = 0.18f)
+                            },
                         ),
                 )
             }
@@ -92,7 +95,7 @@ fun OnboardingScreen(
                         0 -> R.string.onboarding_title_1
                         1 -> R.string.onboarding_title_2
                         else -> R.string.onboarding_title_3
-                    }
+                    },
                 ),
                 style = FoldTheme.typography.titleL,
                 color = colors.onBackground,
@@ -104,7 +107,7 @@ fun OnboardingScreen(
                         0 -> R.string.onboarding_body_1
                         1 -> R.string.onboarding_body_2
                         else -> R.string.onboarding_body_3
-                    }
+                    },
                 ),
                 style = FoldTheme.typography.body,
                 color = colors.onBackground.copy(alpha = 0.78f),
@@ -172,7 +175,7 @@ fun OnboardingScreen(
                         0 -> R.string.onboarding_skip
                         1 -> R.string.onboarding_why
                         else -> R.string.onboarding_pick_folders
-                    }
+                    },
                 ),
                 onClick = {
                     when (step) {

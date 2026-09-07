@@ -24,11 +24,9 @@ object ServerWidgetState {
     /** Broadcast the app listens for to start or stop the server from the widget. */
     const val ACTION_TOGGLE = "com.jeelgajera.fold.widget.TOGGLE_SERVER"
 
-    fun isRunning(context: Context): Boolean =
-        prefs(context).getBoolean(KEY_RUNNING, false)
+    fun isRunning(context: Context): Boolean = prefs(context).getBoolean(KEY_RUNNING, false)
 
-    fun address(context: Context): String? =
-        prefs(context).getString(KEY_ADDRESS, null)
+    fun address(context: Context): String? = prefs(context).getString(KEY_ADDRESS, null)
 
     /**
      * Called by the transfer layer when the server's state changes.
@@ -49,16 +47,14 @@ object ServerWidgetState {
     /** Sends the toggle intent. The app decides what to do with it. */
     fun toggle(context: Context) {
         context.sendBroadcast(
-            Intent(ACTION_TOGGLE).setPackage(context.packageName)
+            Intent(ACTION_TOGGLE).setPackage(context.packageName),
         )
     }
 
     /** True when at least one server widget is on a home screen. */
-    suspend fun hasPlacedWidgets(context: Context): Boolean =
-        runCatching {
-            GlanceAppWidgetManager(context).getGlanceIds(ServerWidget::class.java).isNotEmpty()
-        }.getOrDefault(false)
+    suspend fun hasPlacedWidgets(context: Context): Boolean = runCatching {
+        GlanceAppWidgetManager(context).getGlanceIds(ServerWidget::class.java).isNotEmpty()
+    }.getOrDefault(false)
 
-    private fun prefs(context: Context) =
-        context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
+    private fun prefs(context: Context) = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
 }

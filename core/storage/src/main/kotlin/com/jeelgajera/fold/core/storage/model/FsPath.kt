@@ -24,10 +24,7 @@ enum class FsScheme {
  * [raw] is the only supported way to get a RAW path, and it normalises for you.
  */
 @Serializable
-data class FsPath(
-    val scheme: FsScheme,
-    val value: String,
-) {
+data class FsPath(val scheme: FsScheme, val value: String) {
     /** The last segment. `/storage/emulated/0/Download` -> `Download`. */
     val name: String
         get() = when (scheme) {
@@ -79,8 +76,7 @@ data class FsPath(
     }
 
     /** The segments, for a breadcrumb. `/storage/emulated/0` -> [storage, emulated, 0]. */
-    fun segments(): List<String> =
-        value.split('/').filter { it.isNotEmpty() }
+    fun segments(): List<String> = value.split('/').filter { it.isNotEmpty() }
 
     override fun toString(): String = value
 
