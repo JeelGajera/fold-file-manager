@@ -57,7 +57,7 @@ and what remains before a release.
 ./gradlew :app:assembleDebug
 ```
 
-Requires JDK 17+ and the Android SDK (compileSdk 35). `minSdk` is 30, because
+Requires JDK 17+ and the Android SDK (compileSdk 37). `minSdk` is 30, because
 `MANAGE_EXTERNAL_STORAGE` does not exist below it and the app's premise
 depends on it.
 

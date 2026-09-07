@@ -1,0 +1,26 @@
+# Formatting is machine-enforced so review never spends a comment on it.
+# ktlint reads this file; so does IntelliJ, which keeps the IDE and CI agreeing.
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+# The longest pre-existing line is 119 characters; 120 keeps the current code
+# legal so the ktlint adoption is a formatting change, not a rewrite.
+max_line_length = 120
+ktlint_code_style = intellij_idea
+ij_kotlin_allow_trailing_comma = true
+ij_kotlin_allow_trailing_comma_on_call_site = true
+# @Composable functions are PascalCase by convention and would otherwise trip
+# ktlint's function-naming rule on nearly every UI file.
+ktlint_function_naming_ignore_when_annotated_with = Composable
+
+[*.{yml,yaml,json,toml}]
+indent_style = space
+indent_size = 2

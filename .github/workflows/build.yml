@@ -44,7 +44,13 @@ jobs:
 
       # --continue reports every module's failures in a single run rather than
       # stopping at the first.
+      # Formatting is checked before compilation: a style failure is cheap to
+      # find and should not wait behind a four-minute build.
+      - name: ktlint
+        run: ./gradlew ktlintCheck --continue
+
       - name: Assemble debug
+        if: always()
         run: ./gradlew :app:assembleDebug --continue
 
       - name: Unit tests
