@@ -66,7 +66,7 @@ class IndexWorker @AssistedInject constructor(
                         .setRequiresCharging(true)
                         .setRequiresDeviceIdle(true)
                         .setRequiresBatteryNotLow(true)
-                        .build()
+                        .build(),
                 )
                 .build()
 

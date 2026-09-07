@@ -95,16 +95,14 @@ object VaultCrypto {
 
     fun aliasFor(generation: Int): String = "$ALIAS_PREFIX$generation"
 
-    private fun keyStore(): KeyStore =
-        KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+    private fun keyStore(): KeyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
 
     fun aliasExists(alias: String): Boolean = keyStore().containsAlias(alias)
 
     /** Every FOLD KEK currently in the Keystore, oldest generation first. */
-    fun existingAliases(): List<String> =
-        keyStore().aliases().toList()
-            .filter { it.startsWith(ALIAS_PREFIX) }
-            .sortedBy { it.removePrefix(ALIAS_PREFIX).toIntOrNull() ?: 0 }
+    fun existingAliases(): List<String> = keyStore().aliases().toList()
+        .filter { it.startsWith(ALIAS_PREFIX) }
+        .sortedBy { it.removePrefix(ALIAS_PREFIX).toIntOrNull() ?: 0 }
 
     /**
      * Creates the KEK for [alias] if it is not already there.
@@ -130,7 +128,7 @@ object VaultCrypto {
                         KeyProperties.AUTH_BIOMETRIC_STRONG or KeyProperties.AUTH_DEVICE_CREDENTIAL,
                     )
                     .setInvalidatedByBiometricEnrollment(true)
-                    .build()
+                    .build(),
             )
             generateKey()
         }
@@ -142,9 +140,8 @@ object VaultCrypto {
         if (store.containsAlias(alias)) store.deleteEntry(alias)
     }
 
-    private fun secretKey(alias: String): SecretKey =
-        keyStore().getKey(alias, null) as? SecretKey
-            ?: throw VaultException.KeyUnavailable("The vault key '$alias' is not available")
+    private fun secretKey(alias: String): SecretKey = keyStore().getKey(alias, null) as? SecretKey
+        ?: throw VaultException.KeyUnavailable("The vault key '$alias' is not available")
 
     /**
      * A cipher initialised for wrapping under [alias], ready for `BiometricPrompt`.
@@ -181,12 +178,7 @@ object VaultCrypto {
      *
      * @return plaintext bytes consumed.
      */
-    fun encrypt(
-        source: InputStream,
-        sink: OutputStream,
-        alias: String,
-        authenticatedWrapCipher: Cipher,
-    ): Long {
+    fun encrypt(source: InputStream, sink: OutputStream, alias: String, authenticatedWrapCipher: Cipher): Long {
         val dek = ByteArray(DEK_BYTES).also(random::nextBytes)
         val wrapped = try {
             authenticatedWrapCipher.doFinal(dek)
@@ -267,12 +259,7 @@ object VaultCrypto {
      * The payload is copied through untouched, which is what makes rotating a
      * 200GB vault a matter of moving headers rather than re-encrypting files.
      */
-    fun rewrapHeader(
-        source: InputStream,
-        sink: OutputStream,
-        newAlias: String,
-        authenticatedWrapCipher: Cipher,
-    ) {
+    fun rewrapHeader(source: InputStream, sink: OutputStream, newAlias: String, authenticatedWrapCipher: Cipher) {
         val header = readHeader(source)
         val dek = try {
             unwrapCipher(header.alias, header.wrapIv).doFinal(header.wrappedDek)
@@ -314,13 +301,7 @@ object VaultCrypto {
         }
     }
 
-    fun writeHeader(
-        sink: OutputStream,
-        alias: String,
-        wrapIv: ByteArray,
-        wrappedDek: ByteArray,
-        dataIv: ByteArray,
-    ) {
+    fun writeHeader(sink: OutputStream, alias: String, wrapIv: ByteArray, wrappedDek: ByteArray, dataIv: ByteArray) {
         val aliasBytes = alias.toByteArray(Charsets.US_ASCII)
         require(aliasBytes.size in 1..255) { "Key alias must fit in one byte of length" }
         require(wrapIv.size in 1..255) { "Wrap IV must fit in one byte of length" }
@@ -404,10 +385,11 @@ sealed class VaultException(message: String, cause: Throwable? = null) : IOExcep
      * enrolled. The blobs cannot be opened and no amount of re-prompting helps,
      * so the UI must say so rather than loop.
      */
-    class KeyInvalidated : VaultException(
-        "The vault key was invalidated, most likely because a new fingerprint was " +
-            "added. The encrypted files can no longer be opened."
-    )
+    class KeyInvalidated :
+        VaultException(
+            "The vault key was invalidated, most likely because a new fingerprint was " +
+                "added. The encrypted files can no longer be opened.",
+        )
 
     class KeyUnavailable(message: String, cause: Throwable? = null) : VaultException(message, cause)
 

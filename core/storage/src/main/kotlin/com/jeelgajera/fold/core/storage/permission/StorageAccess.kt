@@ -50,15 +50,13 @@ object StorageAccess {
      * fall back to when this one cannot be resolved -- silently failing to open
      * anything after the user pressed "Allow" is the worst possible outcome here.
      */
-    fun allFilesAccessIntent(context: Context): Intent =
-        Intent(
-            Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
-            Uri.parse("package:${context.packageName}"),
-        )
+    fun allFilesAccessIntent(context: Context): Intent = Intent(
+        Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION,
+        Uri.parse("package:${context.packageName}"),
+    )
 
     /** The device-wide list, for builds that do not honour the per-app intent. */
-    fun allFilesAccessFallbackIntent(): Intent =
-        Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
+    fun allFilesAccessFallbackIntent(): Intent = Intent(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION)
 
     /**
      * Whether either intent can actually be handled.

@@ -11,11 +11,7 @@ import kotlinx.coroutines.flow.callbackFlow
 import java.net.InetAddress
 
 /** Another FOLD instance seen on the network. */
-data class DiscoveredPeer(
-    val name: String,
-    val host: String,
-    val port: Int,
-) {
+data class DiscoveredPeer(val name: String, val host: String, val port: Int) {
     val url: String get() = "http://$host:$port"
 }
 
@@ -111,7 +107,9 @@ class Discovery(context: Context) {
                     }
 
                     override fun onServiceResolved(info: NsdServiceInfo) {
-                        val host: InetAddress? = @Suppress("DEPRECATION") info.host
+                        val host: InetAddress? =
+                            @Suppress("DEPRECATION")
+                            info.host
                         val address = host?.hostAddress
                         if (address != null) {
                             found[info.serviceName] = DiscoveredPeer(

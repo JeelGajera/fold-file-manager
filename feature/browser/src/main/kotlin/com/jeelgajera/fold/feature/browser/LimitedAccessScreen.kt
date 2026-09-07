@@ -128,12 +128,7 @@ fun LimitedAccessScreen(
 }
 
 @Composable
-private fun AccessRow(
-    name: String,
-    meta: String,
-    state: String,
-    dotColor: androidx.compose.ui.graphics.Color,
-) {
+private fun AccessRow(name: String, meta: String, state: String, dotColor: androidx.compose.ui.graphics.Color) {
     val colors = FoldTheme.colors
     Row(
         Modifier

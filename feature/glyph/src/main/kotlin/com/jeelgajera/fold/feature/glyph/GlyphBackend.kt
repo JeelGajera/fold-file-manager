@@ -41,10 +41,7 @@ interface GlyphBackend {
  * returns false on every device, which is the correct behaviour and not a bug --
  * see [GlyphDetection.SDK_INTEGRATION_PENDING].
  */
-class ReflectiveGlyphBackend(
-    private val context: Context,
-    private val hardware: GlyphHardware,
-) : GlyphBackend {
+class ReflectiveGlyphBackend(private val context: Context, private val hardware: GlyphHardware) : GlyphBackend {
 
     private var session: Any? = null
 

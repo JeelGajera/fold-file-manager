@@ -23,10 +23,7 @@ import java.io.File
  * instead of throwing SecurityExceptions from screens that were built assuming
  * raw access.
  */
-class FileSystemProviderFactory(
-    private val context: Context,
-    private val io: CoroutineDispatcher,
-) {
+class FileSystemProviderFactory(private val context: Context, private val io: CoroutineDispatcher) {
     private val state = MutableStateFlow(build())
 
     /** The provider in force. Collect it -- do not cache the value. */

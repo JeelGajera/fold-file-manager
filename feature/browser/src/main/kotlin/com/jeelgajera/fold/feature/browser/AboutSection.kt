@@ -105,12 +105,7 @@ fun AboutSection(
  */
 object IssueReport {
 
-    fun newIssueUrl(
-        issuesUrl: String,
-        versionName: String,
-        versionCode: String,
-        gitSha: String,
-    ): String {
+    fun newIssueUrl(issuesUrl: String, versionName: String, versionCode: String, gitSha: String): String {
         val body = buildString {
             appendLine("<!-- Describe what happened, and what you expected instead. -->")
             appendLine()

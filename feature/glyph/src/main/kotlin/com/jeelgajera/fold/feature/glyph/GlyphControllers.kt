@@ -16,10 +16,7 @@ import kotlinx.coroutines.sync.withLock
  * cleanly. Only one animation is ever in flight -- two sequences fighting over
  * five zones produces a mess that means nothing.
  */
-class StripGlyphController(
-    private val backend: GlyphBackend,
-    private val scope: CoroutineScope,
-) : GlyphController {
+class StripGlyphController(private val backend: GlyphBackend, private val scope: CoroutineScope) : GlyphController {
 
     override val hardware: GlyphHardware = GlyphHardware.STRIP
 
@@ -88,10 +85,7 @@ class StripGlyphController(
 }
 
 /** Matrix hardware: Phone (3). Same contract, 625 cells instead of five zones. */
-class MatrixGlyphController(
-    private val backend: GlyphBackend,
-    private val scope: CoroutineScope,
-) : GlyphController {
+class MatrixGlyphController(private val backend: GlyphBackend, private val scope: CoroutineScope) : GlyphController {
 
     override val hardware: GlyphHardware = GlyphHardware.MATRIX
 
@@ -167,18 +161,17 @@ class MatrixGlyphController(
  */
 object GlyphControllerFactory {
 
-    fun create(context: Context, scope: CoroutineScope): GlyphController =
-        when (GlyphDetection.detect(context)) {
-            GlyphHardware.STRIP -> StripGlyphController(
-                ReflectiveGlyphBackend(context, GlyphHardware.STRIP),
-                scope,
-            )
+    fun create(context: Context, scope: CoroutineScope): GlyphController = when (GlyphDetection.detect(context)) {
+        GlyphHardware.STRIP -> StripGlyphController(
+            ReflectiveGlyphBackend(context, GlyphHardware.STRIP),
+            scope,
+        )
 
-            GlyphHardware.MATRIX -> MatrixGlyphController(
-                ReflectiveGlyphBackend(context, GlyphHardware.MATRIX),
-                scope,
-            )
+        GlyphHardware.MATRIX -> MatrixGlyphController(
+            ReflectiveGlyphBackend(context, GlyphHardware.MATRIX),
+            scope,
+        )
 
-            GlyphHardware.NONE -> NoOpGlyphController
-        }
+        GlyphHardware.NONE -> NoOpGlyphController
+    }
 }

@@ -14,12 +14,12 @@ import androidx.lifecycle.lifecycleScope
 import com.jeelgajera.fold.core.crypto.VaultRepository
 import com.jeelgajera.fold.core.design.theme.FoldTheme
 import com.jeelgajera.fold.core.design.theme.FoldThemeMode
+import com.jeelgajera.fold.core.storage.index.IndexWorker
 import com.jeelgajera.fold.core.storage.permission.StorageAccess
 import com.jeelgajera.fold.core.storage.prefs.SettingsRepository
 import com.jeelgajera.fold.core.storage.prefs.ThemeMode
 import com.jeelgajera.fold.core.storage.provider.FileSystemProviderFactory
 import com.jeelgajera.fold.core.storage.provider.SafDocumentProvider
-import com.jeelgajera.fold.core.storage.index.IndexWorker
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.launch
@@ -64,7 +64,7 @@ class MainActivity : FragmentActivity() {
      * thing a SAF-based file manager does.
      */
     private val pickFolder = registerForActivityResult(
-        ActivityResultContracts.OpenDocumentTree()
+        ActivityResultContracts.OpenDocumentTree(),
     ) { uri ->
         if (uri != null) {
             runCatching { SafDocumentProvider.persistGrant(this, uri) }
@@ -79,7 +79,7 @@ class MainActivity : FragmentActivity() {
      * rather than from a callback.
      */
     private val requestAllFiles = registerForActivityResult(
-        ActivityResultContracts.StartActivityForResult()
+        ActivityResultContracts.StartActivityForResult(),
     ) {
         if (providerFactory.refresh() && StorageAccess.hasAllFilesAccess()) {
             // Newly granted: build the index now rather than waiting for the next

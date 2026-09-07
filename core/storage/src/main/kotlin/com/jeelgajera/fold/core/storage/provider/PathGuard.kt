@@ -32,10 +32,7 @@ import java.io.IOException
  * response, and telling an attacker that their traversal landed somewhere real
  * would confirm the device's layout for them.
  */
-class PathGuard(
-    allowedRoots: List<File>,
-    deniedRoots: List<File>,
-) {
+class PathGuard(allowedRoots: List<File>, deniedRoots: List<File>) {
     private val allowed: List<File> = allowedRoots.mapNotNull { it.canonicalOrNull() }
     private val denied: List<File> = deniedRoots.mapNotNull { it.canonicalOrNull() }
 

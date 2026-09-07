@@ -101,4 +101,3 @@ fun FoldToggleRow(
         FoldSwitch(checked = checked, small = small)
     }
 }
-

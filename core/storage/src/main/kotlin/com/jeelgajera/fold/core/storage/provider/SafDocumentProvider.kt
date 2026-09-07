@@ -16,9 +16,9 @@ import com.jeelgajera.fold.core.storage.model.FsScheme
 import com.jeelgajera.fold.core.storage.model.FsSort
 import com.jeelgajera.fold.core.storage.model.ListOptions
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.withContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -58,38 +58,37 @@ class SafDocumentProvider(
         roots = grantedTrees,
     )
 
-    override suspend fun list(path: FsPath, options: ListOptions): Result<List<FsEntry>> =
-        withContext(io) {
-            val treeUri = uriOf(path).getOrElse { return@withContext Result.failure(it) }
-            val documentId = try {
-                if (DocumentsContract.isDocumentUri(context, treeUri)) {
-                    DocumentsContract.getDocumentId(treeUri)
-                } else {
-                    DocumentsContract.getTreeDocumentId(treeUri)
-                }
-            } catch (e: IllegalArgumentException) {
-                return@withContext Result.failure(FsError.OutOfBounds(path))
+    override suspend fun list(path: FsPath, options: ListOptions): Result<List<FsEntry>> = withContext(io) {
+        val treeUri = uriOf(path).getOrElse { return@withContext Result.failure(it) }
+        val documentId = try {
+            if (DocumentsContract.isDocumentUri(context, treeUri)) {
+                DocumentsContract.getDocumentId(treeUri)
+            } else {
+                DocumentsContract.getTreeDocumentId(treeUri)
             }
-
-            val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, documentId)
-            val entries = ArrayList<FsEntry>()
-            try {
-                resolver.query(childrenUri, PROJECTION, null, null, null)?.use { cursor ->
-                    while (cursor.moveToNext()) {
-                        val entry = cursor.toEntry(treeUri) ?: continue
-                        if (!options.includeHidden && entry.isHidden) continue
-                        entries.add(entry)
-                    }
-                } ?: return@withContext Result.failure(FsError.PermissionDenied(path))
-            } catch (e: SecurityException) {
-                // The persisted grant was revoked between the last listing and now.
-                return@withContext Result.failure(FsError.PermissionDenied(path))
-            } catch (e: Exception) {
-                return@withContext Result.failure(FsError.Io(e.message ?: "SAF query failed", e))
-            }
-
-            Result.success(entries.sortedWith(comparatorFor(options)))
+        } catch (e: IllegalArgumentException) {
+            return@withContext Result.failure(FsError.OutOfBounds(path))
         }
+
+        val childrenUri = DocumentsContract.buildChildDocumentsUriUsingTree(treeUri, documentId)
+        val entries = ArrayList<FsEntry>()
+        try {
+            resolver.query(childrenUri, PROJECTION, null, null, null)?.use { cursor ->
+                while (cursor.moveToNext()) {
+                    val entry = cursor.toEntry(treeUri) ?: continue
+                    if (!options.includeHidden && entry.isHidden) continue
+                    entries.add(entry)
+                }
+            } ?: return@withContext Result.failure(FsError.PermissionDenied(path))
+        } catch (e: SecurityException) {
+            // The persisted grant was revoked between the last listing and now.
+            return@withContext Result.failure(FsError.PermissionDenied(path))
+        } catch (e: Exception) {
+            return@withContext Result.failure(FsError.Io(e.message ?: "SAF query failed", e))
+        }
+
+        Result.success(entries.sortedWith(comparatorFor(options)))
+    }
 
     override suspend fun stat(path: FsPath): Result<FsEntry> = withContext(io) {
         val uri = uriOf(path).getOrElse { return@withContext Result.failure(it) }
@@ -118,30 +117,28 @@ class SafDocumentProvider(
         }
     }
 
-    override suspend fun write(path: FsPath, append: Boolean): Result<OutputStream> =
-        withContext(io) {
-            val uri = uriOf(path).getOrElse { return@withContext Result.failure(it) }
-            // "wa" is append, "wt" truncates. Plain "w" leaves the tail of a longer
-            // previous file in place, which is a classic SAF corruption bug.
-            val mode = if (append) "wa" else "wt"
-            try {
-                val stream = resolver.openOutputStream(uri, mode)
-                    ?: return@withContext Result.failure(FsError.NotFound(path))
-                Result.success(stream)
-            } catch (e: SecurityException) {
-                Result.failure(FsError.PermissionDenied(path))
-            } catch (e: Exception) {
-                Result.failure(FsError.Io(e.message ?: "Cannot write", e))
-            }
+    override suspend fun write(path: FsPath, append: Boolean): Result<OutputStream> = withContext(io) {
+        val uri = uriOf(path).getOrElse { return@withContext Result.failure(it) }
+        // "wa" is append, "wt" truncates. Plain "w" leaves the tail of a longer
+        // previous file in place, which is a classic SAF corruption bug.
+        val mode = if (append) "wa" else "wt"
+        try {
+            val stream = resolver.openOutputStream(uri, mode)
+                ?: return@withContext Result.failure(FsError.NotFound(path))
+            Result.success(stream)
+        } catch (e: SecurityException) {
+            Result.failure(FsError.PermissionDenied(path))
+        } catch (e: Exception) {
+            Result.failure(FsError.Io(e.message ?: "Cannot write", e))
         }
+    }
 
-    override suspend fun createDirectory(path: FsPath): Result<FsEntry> =
-        Result.failure(
-            FsError.Unsupported(
-                "Creating a folder by path. Pick the parent folder first so FOLD can " +
-                    "create it inside a tree you granted.",
-            )
-        )
+    override suspend fun createDirectory(path: FsPath): Result<FsEntry> = Result.failure(
+        FsError.Unsupported(
+            "Creating a folder by path. Pick the parent folder first so FOLD can " +
+                "create it inside a tree you granted.",
+        ),
+    )
 
     /** [to] addresses the destination *directory*. See the interface's note on move. */
     override suspend fun move(from: FsPath, to: FsPath): Result<Unit> = withContext(io) {
@@ -231,8 +228,7 @@ class SafDocumentProvider(
         }
     }.getOrNull()
 
-    private fun treeIdOf(uri: Uri): String? =
-        runCatching { DocumentsContract.getTreeDocumentId(uri) }.getOrNull()
+    private fun treeIdOf(uri: Uri): String? = runCatching { DocumentsContract.getTreeDocumentId(uri) }.getOrNull()
 
     private fun parentOf(uri: Uri): Uri? = runCatching {
         val id = DocumentsContract.getDocumentId(uri)
@@ -309,14 +305,13 @@ class SafDocumentProvider(
         )
 
         /** The intent that asks for one more tree. */
-        fun openTreeIntent(): Intent =
-            Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
-                addFlags(
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or
-                        Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
-                        Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
-                )
-            }
+        fun openTreeIntent(): Intent = Intent(Intent.ACTION_OPEN_DOCUMENT_TREE).apply {
+            addFlags(
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or
+                    Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
+                    Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION,
+            )
+        }
 
         /**
          * Persists a freshly-granted tree so it survives a reboot.
@@ -333,17 +328,16 @@ class SafDocumentProvider(
         }
 
         /** The trees FOLD still holds, read back from the system on launch. */
-        fun persistedRoots(context: Context): List<FsRoot> =
-            context.contentResolver.persistedUriPermissions
-                .filter { it.isReadPermission }
-                .map { permission ->
-                    val uri = permission.uri
-                    FsRoot(
-                        path = FsPath.saf(uri.toString()),
-                        label = treeLabel(uri),
-                        isPrimary = false,
-                    )
-                }
+        fun persistedRoots(context: Context): List<FsRoot> = context.contentResolver.persistedUriPermissions
+            .filter { it.isReadPermission }
+            .map { permission ->
+                val uri = permission.uri
+                FsRoot(
+                    path = FsPath.saf(uri.toString()),
+                    label = treeLabel(uri),
+                    isPrimary = false,
+                )
+            }
 
         /** A readable name for a tree URI, for the limited-access screen. */
         private fun treeLabel(uri: Uri): String {

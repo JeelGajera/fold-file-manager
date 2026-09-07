@@ -48,7 +48,7 @@ fun TypeBadge(
                     Modifier.dashedBorder(borderColor, FoldRules.hairline)
                 } else {
                     Modifier.border(FoldRules.hairline, borderColor, RectangleShape)
-                }
+                },
             )
             .clearAndSetSemantics { },
         contentAlignment = Alignment.Center,
@@ -63,18 +63,17 @@ fun TypeBadge(
 }
 
 /** A dashed outline. Marks a hidden (dot-prefixed) entry, which is a visibility state, not a type. */
-private fun Modifier.dashedBorder(color: Color, width: Dp): Modifier =
-    drawBehind {
-        val strokePx = width.toPx()
-        val dash = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
-            floatArrayOf(3f * density, 3f * density),
-            0f,
-        )
-        drawRect(
-            color = color,
-            style = androidx.compose.ui.graphics.drawscope.Stroke(
-                width = strokePx,
-                pathEffect = dash,
-            ),
-        )
-    }
+private fun Modifier.dashedBorder(color: Color, width: Dp): Modifier = drawBehind {
+    val strokePx = width.toPx()
+    val dash = androidx.compose.ui.graphics.PathEffect.dashPathEffect(
+        floatArrayOf(3f * density, 3f * density),
+        0f,
+    )
+    drawRect(
+        color = color,
+        style = androidx.compose.ui.graphics.drawscope.Stroke(
+            width = strokePx,
+            pathEffect = dash,
+        ),
+    )
+}

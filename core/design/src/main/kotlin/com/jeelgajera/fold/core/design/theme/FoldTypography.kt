@@ -71,52 +71,84 @@ data class FoldTypography(
 
 val FoldTypographyDefaults = FoldTypography(
     displayXL = TextStyle(
-        fontFamily = DotoFamily, fontWeight = FontWeight.W800,
-        fontSize = 44.sp, lineHeight = 40.sp, letterSpacing = 0.02.em,
+        fontFamily = DotoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 44.sp,
+        lineHeight = 40.sp,
+        letterSpacing = 0.02.em,
     ),
     displayL = TextStyle(
-        fontFamily = DotoFamily, fontWeight = FontWeight.W800,
-        fontSize = 30.sp, lineHeight = 32.sp, letterSpacing = 0.16.em,
+        fontFamily = DotoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 30.sp,
+        lineHeight = 32.sp,
+        letterSpacing = 0.16.em,
     ),
     displayM = TextStyle(
-        fontFamily = DotoFamily, fontWeight = FontWeight.W800,
-        fontSize = 26.sp, lineHeight = 28.sp, letterSpacing = 0.01.em,
+        fontFamily = DotoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 26.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.01.em,
     ),
     titleL = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W800,
-        fontSize = 34.sp, lineHeight = 36.sp, letterSpacing = (-0.03).em,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 34.sp,
+        lineHeight = 36.sp,
+        letterSpacing = (-0.03).em,
     ),
     titleM = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W800,
-        fontSize = 26.sp, lineHeight = 29.sp, letterSpacing = (-0.02).em,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 26.sp,
+        lineHeight = 29.sp,
+        letterSpacing = (-0.02).em,
     ),
     titleS = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W800,
-        fontSize = 19.sp, lineHeight = 22.sp, letterSpacing = (-0.02).em,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 19.sp,
+        lineHeight = 22.sp,
+        letterSpacing = (-0.02).em,
     ),
     body = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W400,
-        fontSize = 14.sp, lineHeight = 22.sp,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 14.sp,
+        lineHeight = 22.sp,
     ),
     bodyS = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W400,
-        fontSize = 13.sp, lineHeight = 20.sp,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W400,
+        fontSize = 13.sp,
+        lineHeight = 20.sp,
     ),
     label = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W800,
-        fontSize = 11.sp, lineHeight = 13.sp, letterSpacing = 0.14.em,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 11.sp,
+        lineHeight = 13.sp,
+        letterSpacing = 0.14.em,
     ),
     labelS = TextStyle(
-        fontFamily = ArchivoFamily, fontWeight = FontWeight.W800,
-        fontSize = 10.sp, lineHeight = 12.sp, letterSpacing = 0.12.em,
+        fontFamily = ArchivoFamily,
+        fontWeight = FontWeight.W800,
+        fontSize = 10.sp,
+        lineHeight = 12.sp,
+        letterSpacing = 0.12.em,
     ),
     meta = TextStyle(
-        fontFamily = DotoFamily, fontWeight = FontWeight.W600,
-        fontSize = 11.sp, lineHeight = 16.sp,
+        fontFamily = DotoFamily,
+        fontWeight = FontWeight.W600,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
     ),
     metaS = TextStyle(
-        fontFamily = DotoFamily, fontWeight = FontWeight.W600,
-        fontSize = 10.sp, lineHeight = 14.sp,
+        fontFamily = DotoFamily,
+        fontWeight = FontWeight.W600,
+        fontSize = 10.sp,
+        lineHeight = 14.sp,
     ),
 )
 
@@ -125,6 +157,9 @@ val FoldTypographyDefaults = FoldTypography(
  * that wraps to a second line reads as two numbers. Call sites that render meta
  * text in a constrained row use this.
  */
+// PascalCase, not SCREAMING_SNAKE: Compose's API guidelines name design-system
+// constants like this, and MetaMaxLines/MetaOverflow are read as one pair.
+@Suppress("ktlint:standard:property-naming")
 const val MetaMaxLines: Int = 1
 val MetaOverflow: TextOverflow = TextOverflow.Ellipsis
 

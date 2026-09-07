@@ -10,33 +10,33 @@ import io.ktor.http.CacheControl
 import io.ktor.http.ContentType
 import io.ktor.http.HttpHeaders
 import io.ktor.http.HttpStatusCode
+import io.ktor.http.content.PartData
+import io.ktor.http.content.forEachPart
+import io.ktor.http.content.streamProvider
+import io.ktor.serialization.kotlinx.json.json
 import io.ktor.server.application.Application
-import io.ktor.server.application.call
 import io.ktor.server.application.ApplicationCall
+import io.ktor.server.application.call
 import io.ktor.server.application.install
-import io.ktor.util.pipeline.PipelineContext
+import io.ktor.server.cio.CIO
 import io.ktor.server.engine.ApplicationEngine
 import io.ktor.server.engine.embeddedServer
-import io.ktor.server.cio.CIO
 import io.ktor.server.plugins.autohead.AutoHeadResponse
 import io.ktor.server.plugins.contentnegotiation.ContentNegotiation
 import io.ktor.server.plugins.partialcontent.PartialContent
 import io.ktor.server.plugins.statuspages.StatusPages
-import io.ktor.server.request.receiveMultipart
 import io.ktor.server.request.header
+import io.ktor.server.request.receiveMultipart
 import io.ktor.server.request.uri
 import io.ktor.server.response.header
 import io.ktor.server.response.respond
 import io.ktor.server.response.respondOutputStream
 import io.ktor.server.response.respondText
+import io.ktor.server.routing.delete
 import io.ktor.server.routing.get
 import io.ktor.server.routing.post
-import io.ktor.server.routing.delete
 import io.ktor.server.routing.routing
-import io.ktor.http.content.PartData
-import io.ktor.http.content.forEachPart
-import io.ktor.http.content.streamProvider
-import io.ktor.serialization.kotlinx.json.json
+import io.ktor.util.pipeline.PipelineContext
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -114,7 +114,12 @@ class FoldServer(
 
     private fun Application.module() {
         install(ContentNegotiation) {
-            json(Json { prettyPrint = false; encodeDefaults = true })
+            json(
+                Json {
+                    prettyPrint = false
+                    encodeDefaults = true
+                },
+            )
         }
         // Range requests, so a 400MB download resumes instead of restarting.
         install(PartialContent)
@@ -190,7 +195,7 @@ class FoldServer(
                                 parent = target.parent?.takeIf { it.isWithin(serverRoot) }
                                     ?.let { relativeTo(it) },
                                 entries = entries.map { it.toDto() },
-                            )
+                            ),
                         )
                     },
                     onFailure = { respondRefused() },
@@ -317,8 +322,7 @@ class FoldServer(
         return candidate.takeIf { it.isWithin(serverRoot) }
     }
 
-    private fun relativeTo(path: FsPath): String =
-        path.value.removePrefix(serverRoot.value).removePrefix("/")
+    private fun relativeTo(path: FsPath): String = path.value.removePrefix(serverRoot.value).removePrefix("/")
 
     private fun FsEntry.toDto() = EntryDto(
         name = name,
@@ -416,11 +420,7 @@ data class EntryDto(
 )
 
 @Serializable
-data class ListingResponse(
-    val path: String,
-    val parent: String?,
-    val entries: List<EntryDto>,
-)
+data class ListingResponse(val path: String, val parent: String?, val entries: List<EntryDto>)
 
 @Serializable
 data class UploadResponse(val written: Int)

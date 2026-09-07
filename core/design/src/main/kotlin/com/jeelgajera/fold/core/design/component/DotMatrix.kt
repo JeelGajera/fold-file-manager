@@ -56,7 +56,7 @@ fun DotMeter(
                     Modifier.clearAndSetSemantics { this.contentDescription = meterLabel }
                 } else {
                     Modifier
-                }
+                },
             ),
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {

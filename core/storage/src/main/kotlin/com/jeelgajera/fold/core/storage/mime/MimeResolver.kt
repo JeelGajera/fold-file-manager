@@ -40,11 +40,11 @@ object MimeResolver {
      */
     private val byExtension: Map<String, String> = buildMap {
         // --- Text and markup. The gap this app was built to close. ---
-        put("md", "text/markdown")          // Not in MimeTypeMap. The headline case.
+        put("md", "text/markdown") // Not in MimeTypeMap. The headline case.
         put("markdown", "text/markdown")
         put("mdx", "text/markdown")
         put("txt", "text/plain")
-        put("log", "text/plain")            // Not in MimeTypeMap.
+        put("log", "text/plain") // Not in MimeTypeMap.
         put("csv", "text/csv")
         put("tsv", "text/tab-separated-values")
         put("rtf", "application/rtf")
@@ -93,7 +93,7 @@ object MimeResolver {
 
         // --- Documents ---
         put("pdf", "application/pdf")
-        put("epub", "application/epub+zip")  // Missing on many devices.
+        put("epub", "application/epub+zip") // Missing on many devices.
         put("mobi", "application/x-mobipocket-ebook")
         put("azw3", "application/vnd.amazon.ebook")
         put("doc", "application/msword")
@@ -193,13 +193,13 @@ object MimeResolver {
      * the share sheet will act on it.
      */
     private val signatures: List<Signature> = listOf(
-        Signature(0, byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D), "application/pdf"),           // %PDF-
+        Signature(0, byteArrayOf(0x25, 0x50, 0x44, 0x46, 0x2D), "application/pdf"), // %PDF-
         Signature(0, byteArrayOf(0x89.toByte(), 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A), "image/png"),
         Signature(0, byteArrayOf(0xFF.toByte(), 0xD8.toByte(), 0xFF.toByte()), "image/jpeg"),
         Signature(0, "GIF89a".toByteArray(Charsets.US_ASCII), "image/gif"),
         Signature(0, "GIF87a".toByteArray(Charsets.US_ASCII), "image/gif"),
-        Signature(0, byteArrayOf(0x42, 0x4D), "image/bmp"),                                   // BM
-        Signature(0, byteArrayOf(0x7F, 0x45, 0x4C, 0x46), "application/x-elf"),               // .ELF
+        Signature(0, byteArrayOf(0x42, 0x4D), "image/bmp"), // BM
+        Signature(0, byteArrayOf(0x7F, 0x45, 0x4C, 0x46), "application/x-elf"), // .ELF
         Signature(0, byteArrayOf(0x1F, 0x8B.toByte()), "application/gzip"),
         Signature(0, "BZh".toByteArray(Charsets.US_ASCII), "application/x-bzip2"),
         Signature(0, byteArrayOf(0xFD.toByte(), 0x37, 0x7A, 0x58, 0x5A, 0x00), "application/x-xz"),
@@ -210,11 +210,11 @@ object MimeResolver {
         Signature(0, "fLaC".toByteArray(Charsets.US_ASCII), "audio/flac"),
         Signature(0, "ID3".toByteArray(Charsets.US_ASCII), "audio/mpeg"),
         Signature(0, byteArrayOf(0x1A, 0x45, 0xDF.toByte(), 0xA3.toByte()), "video/x-matroska"),
-        Signature(0, "RIFF".toByteArray(Charsets.US_ASCII), null),        // Needs the subtype at offset 8.
-        Signature(4, "ftyp".toByteArray(Charsets.US_ASCII), null),        // Needs the brand at offset 8.
+        Signature(0, "RIFF".toByteArray(Charsets.US_ASCII), null), // Needs the subtype at offset 8.
+        Signature(4, "ftyp".toByteArray(Charsets.US_ASCII), null), // Needs the brand at offset 8.
         Signature(0, "%!PS".toByteArray(Charsets.US_ASCII), "application/postscript"),
         Signature(0, "-----BEGIN ".toByteArray(Charsets.US_ASCII), "application/x-pem-file"),
-        Signature(0, byteArrayOf(0x50, 0x4B, 0x03, 0x04), null),          // ZIP: needs a peek inside.
+        Signature(0, byteArrayOf(0x50, 0x4B, 0x03, 0x04), null), // ZIP: needs a peek inside.
     )
 
     /** How many bytes are read when sniffing. Enough for every signature above. */
@@ -226,8 +226,7 @@ object MimeResolver {
      * @return the resolved type, or null when the extension is unknown -- callers
      *   that cannot sniff should treat null as [OCTET_STREAM].
      */
-    fun fromExtension(extension: String): String? =
-        byExtension[extension.lowercase().removePrefix(".")]
+    fun fromExtension(extension: String): String? = byExtension[extension.lowercase().removePrefix(".")]
 
     /** The extension lookup with the fallback already applied. */
     fun fromName(name: String): String {
@@ -353,12 +352,10 @@ object MimeResolver {
         }
 
         // ByteArray in a data class needs these written out.
-        override fun equals(other: Any?): Boolean =
-            other is Signature && offset == other.offset &&
-                bytes.contentEquals(other.bytes) && mime == other.mime
+        override fun equals(other: Any?): Boolean = other is Signature && offset == other.offset &&
+            bytes.contentEquals(other.bytes) && mime == other.mime
 
-        override fun hashCode(): Int =
-            (offset * 31 + bytes.contentHashCode()) * 31 + (mime?.hashCode() ?: 0)
+        override fun hashCode(): Int = (offset * 31 + bytes.contentHashCode()) * 31 + (mime?.hashCode() ?: 0)
     }
 
     /** Fills [buffer] as far as the stream allows. Returns bytes read, or -1 at EOF. */

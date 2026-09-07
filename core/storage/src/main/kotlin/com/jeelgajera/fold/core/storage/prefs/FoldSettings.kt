@@ -3,9 +3,9 @@ package com.jeelgajera.fold.core.storage.prefs
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.jeelgajera.fold.core.storage.model.FsSort
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerializationException
 import kotlinx.serialization.json.Json
-import kotlinx.serialization.Serializable
 import java.io.InputStream
 import java.io.OutputStream
 

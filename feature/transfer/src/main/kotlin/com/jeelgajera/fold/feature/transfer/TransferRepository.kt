@@ -25,12 +25,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /** A transfer in flight, as the send screen draws it. */
-data class ActiveTransfer(
-    val name: String,
-    val sentBytes: Long,
-    val totalBytes: Long,
-    val startedAtMillis: Long,
-) {
+data class ActiveTransfer(val name: String, val sentBytes: Long, val totalBytes: Long, val startedAtMillis: Long) {
     val fraction: Float
         get() = if (totalBytes <= 0) 0f else (sentBytes.toFloat() / totalBytes).coerceIn(0f, 1f)
 
