@@ -44,12 +44,12 @@ rate limiting (`ServerAuthTest`, 14).
 
 Ranked by likelihood of needing attention.
 
-1. **Ktor API surface.** Pinned to 2.3.12.
+1. **Ktor API surface.** Pinned to 2.3.13.
    `PipelineContext<Unit, ApplicationCall>` is the 2.x route-handler receiver;
    Ktor 3.x renames it to `RoutingContext`. `FoldServer.kt` is the file to
    update on a major-version bump.
 
-2. **Glance layout primitives.** `:widget` targets Glance 1.1.1, whose layout
+2. **Glance layout primitives.** `:widget` targets Glance 1.2.0, whose layout
    API has changed between releases. `FoldWidgets.kt` is self-contained.
 
 3. **Room schema export.** `FoldDatabase` exports to `core/storage/schemas`,

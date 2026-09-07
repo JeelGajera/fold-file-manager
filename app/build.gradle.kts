@@ -1,13 +1,14 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     alias(libs.plugins.android.application)
-    alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hilt)
 }
 
 /** The repository this build came from. Used by About and by the issue link. */
-val SOURCE_URL = "https://github.com/JeelGajera/fold-file-manager"
+val sourceUrl = "https://github.com/JeelGajera/fold-file-manager"
 
 /**
  * The short commit hash, or "unknown" outside a git checkout.
@@ -27,7 +28,7 @@ fun gitSha(): String = try {
 
 android {
     namespace = "com.jeelgajera.fold"
-    compileSdk = 35
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.jeelgajera.fold"
@@ -35,7 +36,7 @@ android {
         // exist and the whole premise of the app -- reading the filesystem rather
         // than MediaStore -- cannot be honoured.
         minSdk = 30
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "0.4.1"
 
@@ -45,8 +46,8 @@ android {
         // "report an issue" link carries it into the issue body. A bug report
         // that names the commit is worth several that describe a version.
         buildConfigField("String", "GIT_SHA", "\"" + gitSha() + "\"")
-        buildConfigField("String", "SOURCE_URL", "\"" + SOURCE_URL + "\"")
-        buildConfigField("String", "ISSUES_URL", "\"" + SOURCE_URL + "/issues\"")
+        buildConfigField("String", "SOURCE_URL", "\"" + sourceUrl + "\"")
+        buildConfigField("String", "ISSUES_URL", "\"" + sourceUrl + "/issues\"")
     }
 
     buildTypes {
@@ -73,7 +74,7 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    kotlinOptions { jvmTarget = "17" }
+    kotlin { compilerOptions { jvmTarget.set(JvmTarget.JVM_17) } }
 
     packaging {
         resources.excludes += setOf(
